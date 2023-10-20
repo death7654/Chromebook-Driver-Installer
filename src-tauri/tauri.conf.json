@@ -52,10 +52,11 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
+        "resizable": false,
+        "center": true,
         "title": "OneClickDriverInstaller",
         "width": 800,
-        "height": 600
+        "height": 500
       }
     ]
   }
