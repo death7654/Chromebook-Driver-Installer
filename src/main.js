@@ -7,7 +7,12 @@ const touchPad = await Command.sidecar("./binaries/crostouchpad.4.1.4-installer"
 const touchPadEve = await Command.sidecar("./binaries/crostouchpad.4.1.4-onlyeve-installer", ["/S",]);
 const touchScreen = await Command.sidecar("./binaries/crostouchscreen.2.9.4-installer", ["/S",]);
 const wilcoEc = await Command.sidecar("./binaries/wilcoec.1.0.1-installer", ["/S",]);
+const vcDist = await Command.sidecar("./binaries/VC_redist.x64");
+
 const boardname = await invoke("get_board_name");
+let hwid = await invoke("get_hwid")
+hwid = hwid.split('\n');
+console.log(hwid[3]);
 
 
 setInterval(async () => {
@@ -28,7 +33,7 @@ function installDrivers() {
     console.log("installing eve touchpad");
   }
 
-  if (boardname == "Wilco")
+  if (boardname !== "Wilco")
   {
     ec.execute();
   }
