@@ -18,11 +18,11 @@
         "open": true,
         "sidecar": true,
         "scope": [
-          { "name": "./binaries/crostouchpad.4.1.4-installer", 
-          "sidecar": true,
-          "args": [
-            "/S"
-          ] }
+          { "name": "./binaries/crosec.2.0.2-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/crostouchpad.4.1.4-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/crostouchpad.4.1.4-onlyeve-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/crostouchscreen.2.9.4-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/wilcoec.1.0.1-installer", "sidecar": true,"args": ["/S"]}
         ]
       }
     },
@@ -38,7 +38,11 @@
         "icons/icon.ico"
       ],
       "externalBin": [
-        "./binaries/crostouchpad.4.1.4-installer"
+        "./binaries/crosec.2.0.2-installer",
+        "./binaries/crostouchpad.4.1.4-installer",
+        "./binaries/crostouchpad.4.1.4-onlyeve-installer",
+        "./binaries/crostouchscreen.2.9.4-installer",
+        "./binaries/wilcoec.1.0.1-installer"
       ]
 
     },
