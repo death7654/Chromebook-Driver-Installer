@@ -22,7 +22,8 @@
           { "name": "./binaries/crostouchpad.4.1.4-installer", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/crostouchpad.4.1.4-onlyeve-installer", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/crostouchscreen.2.9.4-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/wilcoec.1.0.1-installer", "sidecar": true,"args": ["/S"]}
+          { "name": "./binaries/wilcoec.1.0.1-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/VC_redist.x64", "sidecar": true,"args": ["/S"]}
         ]
       }
     },
@@ -42,7 +43,8 @@
         "./binaries/crostouchpad.4.1.4-installer",
         "./binaries/crostouchpad.4.1.4-onlyeve-installer",
         "./binaries/crostouchscreen.2.9.4-installer",
-        "./binaries/wilcoec.1.0.1-installer"
+        "./binaries/wilcoec.1.0.1-installer",
+        "./binaries/VC_redist.x64"
       ]
 
     },

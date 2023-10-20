@@ -1,40 +1,84 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-
-use std::{os::windows::process::CommandExt};
-use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
+use std::os::windows::process::CommandExt;
+use sysinfo::{ProcessExt, System, SystemExt};
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_board_name,check_process])
+        .invoke_handler(tauri::generate_handler![
+            get_board_name,
+            check_process,
+            get_hwid
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 #[tauri::command]
 async fn get_board_name() -> String {
-    let cmd_boardname: Result<std::process::Output, std::io::Error> =
-            std::process::Command::new("wmic")
-                .creation_flags(0x08000000)
-                .args(["baseboard", "get", "Product"])
-                .output();
+    return match_result_vec(exec("wmic", Some(vec!["baseboard", "get", "Product"])));
 
-        let boardnamelong: String = match cmd_boardname {
-            Ok(output) => String::from_utf8_lossy(&output.stdout).split("\n").map(|x| x.to_string()).collect::<Vec<String>>()[1].clone(),
-            Err(e) => {
-                println!("boardnameError `{}`.", e);
-                String::from("") // This match returns a blank string.
+}
+#[tauri::command]
+async fn check_process() -> bool {
+    let system = System::new_all();
+
+    system
+        .processes()
+        .into_iter()
+        .find(|(_, process)| {
+            process.name() == "crostouchscreen.2.9.4-installer-x86_64-pc-windows-msvc.exe"
+        })
+        .is_some()
+}
+#[tauri::command]
+async fn get_hwid() -> String {
+    return match_result(exec("powershell", Some(vec!["Get-WmiObject", "Win32_PNPEntity", "|", "Select", "DeviceID"])));
+    }
+//helper
+fn exec(program: &str, args: Option<Vec<&str>>) -> Result<std::process::Output, std::io::Error> {
+    let mut cmd = std::process::Command::new(program);
+    #[cfg(windows)]
+    cmd.creation_flags(0x08000000);
+    if let Some(arg_vec) = args {
+        for arg in arg_vec {
+            cmd.arg(arg);
+        }
+    }
+    return cmd.output();
+}
+
+fn match_result(result: Result<std::process::Output, std::io::Error>) -> String {
+    let str = match result {
+        Ok(output) => String::from_utf8_lossy(&output.stdout).to_string(),
+        Err(e) => {
+            let error_string = e.to_string();
+            if error_string.find("os error 2") != None {
+                println!("Missing Ectools or Cbmem Binaries");
+            } else {
+                println!("Error `{}`.", e);
             }
-        };
-        let boardname = boardnamelong.trim();
-        return String::from(boardname);
-    }
-    #[tauri::command]
-    async fn check_process() -> bool {
-        let system = System::new_all();
-    
-        system.processes().into_iter().find(|(_, process)| 
-          process.name() == "crostouchscreen.2.9.4-installer-x86_64-pc-windows-msvc.exe"
-        ).is_some()
-    }
-        
+            return "0".to_string();
+        }
+    };
+    return str.trim().to_string();
+}
+fn match_result_vec(result: Result<std::process::Output, std::io::Error>) -> String {
+    let str = match result {
+        Ok(output) => String::from_utf8_lossy(&output.stdout)
+            .split("\n")
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()[1]
+            .clone(),
+        Err(e) => {
+            let error_string = e.to_string();
+            if error_string.find("os error 2") != None {
+                println!("Missing Ectools or Cbmem Binaries");
+            } else {
+                println!("Error `{}`.", e);
+            }
+            return "0".to_string();
+        }
+    };
+    return str.trim().to_string();
+}
