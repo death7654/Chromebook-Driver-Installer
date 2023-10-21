@@ -20,14 +20,14 @@ async fn get_board_name() -> String {
 
 }
 #[tauri::command]
-async fn check_process() -> bool {
+async fn check_process(value1: String) -> bool {
     let system = System::new_all();
 
     system
         .processes()
         .into_iter()
         .find(|(_, process)| {
-            process.name() == "crostouchscreen.2.9.4-installer-x86_64-pc-windows-msvc.exe"
+            process.name() == value1
         })
         .is_some()
 }
