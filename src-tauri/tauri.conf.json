@@ -23,7 +23,11 @@
           { "name": "./binaries/crostouchpad.4.1.4-onlyeve-installer", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/crostouchscreen.2.9.4-installer", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/wilcoec.1.0.1-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/VC_redist.x64", "sidecar": true,"args": ["/S"]}
+          { "name": "./binaries/VC_redist.x64", "sidecar": true,"args": ["/quiet"]},
+          { "name": "./binaries/csaudiosstcatpt.1.0.1-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/max98090.1.0.4-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/max98090-r11.1.0.0-installer", "sidecar": true,"args": ["/S"]}
+
         ]
       }
     },
@@ -44,7 +48,10 @@
         "./binaries/crostouchpad.4.1.4-onlyeve-installer",
         "./binaries/crostouchscreen.2.9.4-installer",
         "./binaries/wilcoec.1.0.1-installer",
-        "./binaries/VC_redist.x64"
+        "./binaries/VC_redist.x64",
+        "./binaries/csaudiosstcatpt.1.0.1-installer",
+        "./binaries/max98090.1.0.4-installer",
+        "./binaries/max98090-r11.1.0.0-installer"
       ]
 
     },
