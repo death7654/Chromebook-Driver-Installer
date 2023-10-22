@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>One Click Driver Installer</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Poppins"
-      rel="stylesheet"
-    />
-    <link href="./src/styles.css" rel="stylesheet" />
-  </head>
-  <body>
-    <section class="mainPage" id="mainPage">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Click Driver Installer</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+  <link href="./src/styles.css" rel="stylesheet" />
+</head>
+
+<body>
+  <section class="mainPage" id="mainPage">
     <div class="title">
       <h1>One Click Driver Installer</h1>
     </div>
@@ -28,14 +27,16 @@
       <div class="dash tres"></div>
       <div class="dash cuatro"></div>
     </div>
-    <span class="loader">Installing</span>  
+    <div class="center">
+      <h1 class="loaderText">Installing&nbsp;&nbsp;<h1 class="loaderText" id="process"></h1></h1>
+    </div>
   </section>
   <section class="finished" id="finished">
     <h1 class="finishedText">All Avaliable Drivers Have Been Installed</h1>
     <button class="install finishButton finishPageButton" id="close1" role="button">CLOSE</button>
     <h1 class="finishedThanks">Thank You</h1>
   </section>
-  </body>
-  <script type="module" src="/src/main.js"></script>
+</body>
+<script type="module" src="/src/main.js"></script>
 
 </html>

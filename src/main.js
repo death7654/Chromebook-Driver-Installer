@@ -195,6 +195,7 @@ function installStatus() {
   } else if (processExists === false && processStatus === 0) {
     process = processName[index];
     installDrivers(process);
+    document.getElementById('process').innerText = process;
   } else if (processExists === true && processStatus === 0) {
     process = processName[index];
     //console.log(process);

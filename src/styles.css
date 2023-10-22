@@ -62,12 +62,32 @@ body {
   top: 150px;
   left: 235px;
 }
-
+.mainPage{
+  display: none;
+  height: 100%;
+}
 .progressPage {
   width: 100%;
   height: 100%;
   background: #050801;
-  display: none;
+  height: 100%;
+}
+.process{
+  position: absolute;
+  top: 320px;
+  left: 310px;
+}
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 25px;
+}
+.loaderText {
+  font-size: 18px;
 }
 
 .container {
