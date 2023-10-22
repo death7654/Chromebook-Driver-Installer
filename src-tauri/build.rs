@@ -1,5 +1,4 @@
 fn main() {
-    /* 
   let mut windows = tauri_build::WindowsAttributes::new();
   windows = windows.app_manifest(r#"
   <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -14,6 +13,7 @@ fn main() {
   "#);
   let attrs =  tauri_build::Attributes::new().windows_attributes(windows);
   tauri_build::try_build(attrs).expect("failed to run build script");
-  */
+  /* 
     tauri_build::build()
+    */
 }

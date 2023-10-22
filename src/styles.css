@@ -63,7 +63,6 @@ body {
   left: 235px;
 }
 .mainPage{
-  display: none;
   height: 100%;
 }
 .progressPage {
@@ -71,6 +70,7 @@ body {
   height: 100%;
   background: #050801;
   height: 100%;
+  display: none;
 }
 .process{
   position: absolute;
