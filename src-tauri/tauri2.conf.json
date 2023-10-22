@@ -27,6 +27,7 @@
           { "name": "./binaries/csaudiosstcatpt.1.0.1-installer", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/max98090.1.0.4-installer", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/max98090-r11.1.0.0-installer", "sidecar": true,"args": ["/S"]},
+          { "name": "./binaries/BayTrailChipsetDriver-Lenovo", "sidecar": true,"args": ["/S"]},
           { "name": "./binaries/alc5645audio", "sidecar": true,"args": ["/S"]}
 
 
@@ -90,6 +91,7 @@
         "./binaries/csaudiosstcatpt.1.0.1-installer",
         "./binaries/max98090.1.0.4-installer",
         "./binaries/max98090-r11.1.0.0-installer",
+        "./binaries/BayTrailChipsetDriver-Lenovo",
         "./binaries/alc5645audio"
       ]
 

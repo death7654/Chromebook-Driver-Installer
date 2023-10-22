@@ -1,9 +1,9 @@
 [package]
-name = "OneClickDriverInstaller"
+name = "one_click_driver_installs"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
+description = "installs all avaliable drivers for chromebooks"
+authors = ["Robinson Arysseril"]
+license = "GPL-3.0"
 repository = ""
 edition = "2021"
 

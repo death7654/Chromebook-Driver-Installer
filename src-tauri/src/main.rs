@@ -15,7 +15,7 @@ fn main() {
 }
 
 #[tauri::command]
-async fn get_board_name() -> String {
+fn get_board_name() -> String {
     return match_result_vec(exec("wmic", Some(vec!["baseboard", "get", "Product"])));
 
 }
@@ -32,7 +32,7 @@ async fn check_process(value1: String) -> bool {
         .is_some()
 }
 #[tauri::command]
-async fn get_hwid() -> String {
+fn get_hwid() -> String {
     return match_result(exec("powershell", Some(vec!["Get-WmiObject", "Win32_PNPEntity", "|", "Select", "DeviceID"])));
     }
 //helper
