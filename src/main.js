@@ -137,40 +137,40 @@ if (boardname === "Samus") {
 }
 
 //Assigns variables to file name to check if process has started, and if it is finished
-const vcDist = "VC_redist.x64-x86_64-pc-windows-msvc.exe";
+const vcDist = "VC_redist.x64.exe";
 
 let ECFile = null;
 if (boardname === "Wilco") {
-  ECFile = "wilcoec.1.0.1-installer-x86_64-pc-windows-msvc.exe";
+  ECFile = "wilcoec.1.0.1-installer.exe";
 } else {
-  ECFile = "crosec.2.0.2-installer-x86_64-pc-windows-msvc.exe";
+  ECFile = "crosec.2.0.2-installer.exe";
 }
 
 let touchPadInstaller;
 if (boardname === "Eve") {
   touchPadInstaller =
-    "crostouchpad.4.1.4-onlyeve-installer-x86_64-pc-windows-msvc.exe";
+    "crostouchpad.4.1.4-onlyeve-installer.exe";
 } else {
-  touchPadInstaller = "crostouchpad.4.1.4-installer-x86_64-pc-windows-msvc.exe";
+  touchPadInstaller = "crostouchpad.4.1.4-installer.exe";
 }
 
 const touchScreenInstaller =
-  "crostouchscreen.2.9.4-installer-x86_64-pc-windows-msvc.exe";
+  "crostouchscreen.2.9.4-installer.exe";
 
 //assigns process name
 let Audio;
 if (max989090 === true) {
   if (boardname === "Cyan") {
-    Audio = "max98090-r11.1.0.0-installer-x86_64-pc-windows-msvc.exe";
+    Audio = "max98090-r11.1.0.0-installer.exe";
   } else {
-    Audio = "max98090.1.0.4-installer-x86_64-pc-windows-msvc.exe";
+    Audio = "max98090.1.0.4-installer.exe";
   }
 } else if (boardname === "Samus") {
-  Audio = "csaudiosstcatpt.1.0.1-installer-x86_64-pc-windows-msvc.exe";
+  Audio = "csaudiosstcatpt.1.0.1-installer.exe";
 } else if (realTekAudio === true) {
-  Audio = "BayTrailChipsetDriver-Lenovo-x86_64-pc-windows-msvc.exe";
+  Audio = "alc5645audio.exe";
 }
-const i2sInstaller = "BayTrailChipsetDriver-Lenovo-x86_64-pc-windows-msvc.exe";
+const i2sInstaller = "BayTrailChipsetDriver-Lenovo.exe";
 
 
 //essentially only allows one process to execute at one time
