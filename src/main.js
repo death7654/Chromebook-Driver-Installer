@@ -1,3 +1,5 @@
+//THIS WILL NOT WORK IN DEBUG DUE TO THE FILE IN BINARYIES HAVING THE x86_64 EXTENSION AND THE BUILD HAVING NONE
+
 import "./styles.css";
 import { invoke } from "@tauri-apps/api/tauri";
 import { Command } from "@tauri-apps/api/shell";
