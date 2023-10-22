@@ -1,5 +1,5 @@
 body {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   background: #050801;
   color: white;
   -ms-overflow-style: none;
@@ -33,7 +33,7 @@ body {
   position: relative;
   top: 50px;
 }
-.install{
+.install {
   padding: 30px 90px;
   background-color: #050801;
   font-weight: bold;
@@ -47,13 +47,211 @@ body {
 }
 
 .startInstall {
-  color: #50C878;
-}
-.startInstall:hover{
-  background: #03C988	;
+  background: #2AAA8A;
   color: #050801;
-  box-shadow: 0 0 5px #03C988	,
-              0 0 25px #03C988	,
-              0 0 50px #03C988	,
-              0 0 200px #03C988;
+  box-shadow: 0 0 5px #2AAA8A, 0 0 25px #2AAA8A, 0 0 50px #2AAA8A,
+    0 0 200px #2AAA8A;
+}
+.startInstall:hover {
+  box-shadow: 0 0 20px #21846b, 0 0 100px #21846b, 0 0 200px #21846b,
+    0 0 800px #21846b;
+}
+.closeStart {
+  padding: 30px 110px;
+  position: absolute;
+  top: 150px;
+  left: 235px;
+}
+
+.progressPage {
+  width: 100%;
+  height: 100%;
+  background: #050801;
+  display: none;
+}
+
+.container {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+}
+
+.dash {
+  margin: 0 15px;
+  width: 35px;
+  height: 15px;
+  border-radius: 8px;
+  background: #16df71;
+  box-shadow: 0 0 80px 0 #16df71;
+}
+
+.uno {
+  margin-right: -18px;
+  transform-origin: center left;
+  animation: spin 3s linear infinite;
+}
+
+.dos {
+  transform-origin: center right;
+  animation: spin2 3s linear infinite;
+  animation-delay: 0.2s;
+}
+
+.tres {
+  transform-origin: center right;
+  animation: spin3 3s linear infinite;
+  animation-delay: 0.3s;
+}
+
+.cuatro {
+  transform-origin: center right;
+  animation: spin4 3s linear infinite;
+  animation-delay: 0.4s;
+}
+
+.loader {
+  color: #fff;
+  display: inline-block;
+  position: absolute;
+  box-sizing: border-box;
+  font-size: 18px;
+  position: absolute;
+  top: 275px;
+  left: 350px;
+}
+
+.finished {
+  letter-spacing: 4px;
+  display: none;
+}
+.finishedText {
+  position: absolute;
+  left: 75px;
+  top: 50px;
+}
+.finishedThanks {
+  position: absolute;
+  top: 360px;
+  left: 310px;
+}
+.finishPageButton{
+  position: absolute;
+  left: 250px;
+  top: 200px;
+}
+.finishButton {
+  background: #ee4b2b;
+  color: #050801;
+  box-shadow: 0 0 5px #ee4b2b, 0 0 25px #ee4b2b, 0 0 50px #ee4b2b,
+    0 0 200px #ee4b2b;
+}
+.finishButton:hover {
+  box-shadow: 0 0 20px #9d331d, 0 0 100px #9d331d, 0 0 200px #9d331d,
+    0 0 800px #9d331d;
+}
+
+
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(360deg);
+  }
+  30% {
+    transform: rotate(370deg);
+  }
+  35% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin2 {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-180deg);
+  }
+  35% {
+    transform: rotate(-190deg);
+  }
+  40% {
+    transform: rotate(-180deg);
+  }
+  78% {
+    transform: rotate(-180deg);
+  }
+  95% {
+    transform: rotate(-360deg);
+  }
+  98% {
+    transform: rotate(-370deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin3 {
+  0% {
+    transform: rotate(0deg);
+  }
+  27% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(180deg);
+  }
+  45% {
+    transform: rotate(190deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  62% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(360deg);
+  }
+  80% {
+    transform: rotate(370deg);
+  }
+  85% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin4 {
+  0% {
+    transform: rotate(0deg);
+  }
+  38% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(-360deg);
+  }
+  65% {
+    transform: rotate(-370deg);
+  }
+  75% {
+    transform: rotate(-360deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
 }
