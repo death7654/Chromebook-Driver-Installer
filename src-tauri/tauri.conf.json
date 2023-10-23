@@ -15,23 +15,7 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": true,
-        "sidecar": true,
-        "scope": [
-          { "name": "./binaries/crosec.2.0.2-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/crostouchpad.4.1.4-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/crostouchpad.4.1.4-onlyeve-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/crostouchscreen.2.9.4-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/wilcoec.1.0.1-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/VC_redist.x64", "sidecar": true,"args": ["/quiet"]},
-          { "name": "./binaries/csaudiosstcatpt.1.0.1-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/max98090.1.0.4-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/max98090-r11.1.0.0-installer", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/BayTrailChipsetDriver-Lenovo", "sidecar": true,"args": ["/S"]},
-          { "name": "./binaries/alc5645audio", "sidecar": true,"args": ["/S"]}
-
-
-        ]
+        "open": true
       },
       "window":{
         "all": false,
@@ -80,19 +64,6 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ],
-      "externalBin": [
-        "./binaries/crosec.2.0.2-installer",
-        "./binaries/crostouchpad.4.1.4-installer",
-        "./binaries/crostouchpad.4.1.4-onlyeve-installer",
-        "./binaries/crostouchscreen.2.9.4-installer",
-        "./binaries/wilcoec.1.0.1-installer",
-        "./binaries/VC_redist.x64",
-        "./binaries/csaudiosstcatpt.1.0.1-installer",
-        "./binaries/max98090.1.0.4-installer",
-        "./binaries/max98090-r11.1.0.0-installer",
-        "./binaries/BayTrailChipsetDriver-Lenovo",
-        "./binaries/alc5645audio"
       ]
 
     },
