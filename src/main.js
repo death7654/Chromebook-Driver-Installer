@@ -2,51 +2,24 @@
 
 import "./styles.css";
 import { invoke } from "@tauri-apps/api/tauri";
-import { Command } from "@tauri-apps/api/shell";
 import { appWindow } from "@tauri-apps/api/window";
 
+//sets variables so updates are easily done
+const touchScreenDriver = "https://github.com/coolstar/driverinstallers/raw/master/crostouchscreen/crostouchscreen.2.9.4-installer.exe";
+const wilcoecDriver = "https://github.com/coolstar/driverinstallers/raw/master/wilcoec/wilcoec.1.0.1-installer.exe";
+const ecDriver = "https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.2-installer.exe";
+const samusAudioDriver = "https://github.com/coolstar/driverinstallers/raw/master/csaudiosstcatpt/csaudiosstcatpt.1.0.1-installer.exe";
+const maxr11AudioDriver = "https://github.com/coolstar/driverinstallers/raw/master/max98090-r11/max98090-r11.1.0.0-installer.exe";
+const max98090driver = "https://github.com/coolstar/driverinstallers/raw/master/max98090/max98090.1.0.4-installer.exe";
+const realTekAudioDriver ="https://coolstar.org/chromebook/downloads/drivers/alc5645%20audio.exe";
+const i2sDriverLink = "https://coolstar.org/chromebook/downloads/drivers/BayTrailChipsetDriver-Lenovo.exe";
+const drallionAudio = ""
 document.addEventListener("contextmenu", (event) => event.preventDefault());
 
-//sets up sidecars, ready to execute
-
-const crosVcDist =  Command.sidecar("./binaries/VC_redist.x64", [
-  "/quiet",
-]);
-const crosEc =  Command.sidecar("./binaries/crosec.2.0.2-installer", [
-  "/S",
-]);
-const crosTouchPad =  Command.sidecar(
-  "./binaries/crostouchpad.4.1.4-installer",
-  ["/S"]
-);
-const crosTouchPadEve =  Command.sidecar(
-  "./binaries/crostouchpad.4.1.4-onlyeve-installer",
-  ["/S"]
-);
-const crosTouchScreen =  Command.sidecar(
-  "./binaries/crostouchscreen.2.9.4-installer",
-  ["/S"]
-);
-const crosWilcoEc =  Command.sidecar(
-  "./binaries/wilcoec.1.0.1-installer",
-  ["/S"]
-);
-const maxAudio =  Command.sidecar("./binaries/max98090.1.0.4-installer", [
-  "/S",
-]);
-const maxAudioR11 =  Command.sidecar(
-  "./binaries/max98090-r11.1.0.0-installer",
-  ["/S"]
-);
-const audioSamus =  Command.sidecar(
-  "./binaries/csaudiosstcatpt.1.0.1-installer",
-  ["/S"]
-);
-
-const i2s =  Command.sidecar("./binaries/BayTrailChipsetDriver-Lenovo", [
-  "/S",
-]);
-const realTek =  Command.sidecar("./binaries/alc5645audio", ["/S"]);
+setTimeout(async() => {
+  invoke('on_start')
+  invoke('downloader');
+})
 
 //gets boardname
 let boardname;
@@ -138,41 +111,51 @@ if (boardname === "Samus") {
 }
 
 //Assigns variables to file name to check if process has started, and if it is finished
-const vcDist = "VC_redist.x64.exe";
+const vcDist = "vc_redist.x64.exe";
 
 let ECFile = null;
 if (boardname === "Wilco") {
   ECFile = "wilcoec.1.0.1-installer.exe";
+  invoke("download_driver", {value1: wilcoecDriver})
 } else {
   ECFile = "crosec.2.0.2-installer.exe";
+  invoke("download_driver", {value1: ecDriver})
+
 }
 
-let touchPadInstaller;
-if (boardname === "Eve") {
-  touchPadInstaller =
-    "crostouchpad.4.1.4-onlyeve-installer.exe";
-} else {
-  touchPadInstaller = "crostouchpad.4.1.4-installer.exe";
-}
+const touchPadInstaller = "crostouchpad.4.1.4-installer.exe";
 
-const touchScreenInstaller =
-  "crostouchscreen.2.9.4-installer.exe";
+const touchScreenInstaller ="crostouchscreen.2.9.4-installer.exe";
+if (touchscreen === true)
+{
+  invoke("download_driver", {value1: touchScreenDriver})
+}
 
 //assigns process name
 let Audio;
 if (max989090 === true) {
   if (boardname === "Cyan") {
     Audio = "max98090-r11.1.0.0-installer.exe";
+    invoke('download_driver',{value1: maxr11AudioDriver})
   } else {
     Audio = "max98090.1.0.4-installer.exe";
+    invoke('download_driver',{value1: max98090driver});
   }
 } else if (boardname === "Samus") {
   Audio = "csaudiosstcatpt.1.0.1-installer.exe";
+  invoke('download_driver',{value1: samusAudioDriver});
 } else if (realTekAudio === true) {
   Audio = "alc5645audio.exe";
+  invoke('download_driver',{value1: realTekAudioDriver});
+} else if (boardname === "Drallion")
+{
+  Audio = "Realtek-High-Definition-Audio-Driver_266V7_WIN_6.0.9341.1_A13.EXE"
 }
 const i2sInstaller = "BayTrailChipsetDriver-Lenovo.exe";
-
+if (i2sDriver === true)
+{
+  invoke('download_driver',{value1: i2sDriverLink});
+}
 
 //essentially only allows one process to execute at one time
 let index = 0;
@@ -228,41 +211,53 @@ function installFinished(){
 //executes sidecars in order
 async function installDrivers(driver) {
   console.log(driver);
-  if (driver === vcDist) {
-    crosVcDist.execute();
-  } else if (driver === ECFile) {
-    if (driver === "wilcoec.1.0.1-installer-x86_64-pc-windows-msvc.exe") {
-      crosWilcoEc.execute();
-    } else {
-      crosEc.execute();
+  if (driver === vcDist) 
+  {
+    setTimeout(async() => {invoke('install_vc_dist');})
+  } 
+  else if (driver === ECFile) 
+  {
+    if (driver === "wilcoec.1.0.1-installer.exe") 
+    {
+      setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\wilcoec.1.0.1-installer.exe"});})
+    } 
+    else 
+    {
+      setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\crosec.2.0.2-installer.exe"});})
     }
-  } else if (driver === touchPadInstaller) {
-    if (
-      driver ===
-      "crostouchpad.4.1.4-onlyeve-installer-x86_64-pc-windows-msvc.exe"
-    ) {
-      crosTouchPadEve.execute();
-    } else {
-      crosTouchPad.execute();
-    }
-  } else if (touchscreen === true && driver === touchScreenInstaller) {
-    crosTouchScreen.execute();
-  } else if (touchscreen === false && driver === touchScreenInstaller) {
+  } 
+  else if (driver === touchPadInstaller) 
+  {
+    setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\crostouchpad.4.1.4-installer.exe"});})
+  } 
+  else if (touchscreen === true && driver === touchScreenInstaller) 
+  {
+    setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\crostouchscreen.2.9.4-installer.exe"});})
+  } 
+  else if (touchscreen === false && driver === touchScreenInstaller) {
     index++;
-  } else if (i2sDriver === true && driver === i2sInstaller) {
-    i2s.execute();
-  } else if (i2sDriver === false && driver === i2sInstaller) {
+  } 
+  else if (i2sDriver === true && driver === i2sInstaller) {
+    setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\BayTrailChipsetDriver-Lenovo.exe"});})
+  } 
+  else if (i2sDriver === false && driver === i2sInstaller) {
     index++;
-  } else if (max989090 === true && driver === Audio) {
+  } 
+  else if (max989090 === true && driver === Audio) {
     if (boardname === "Cyan") {
-      maxAudioR11.execute();
+      setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\max98090-r11.1.0.0-installer.exe"});})
     } else {
-      maxAudio.execute();
+      setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\max98090.1.0.4-installer.exe"});})
     }
-  } else if (samusAudio === true && driver === Audio) {
-    audioSamus.execute();
-  } else if (realTekAudio === true && driver === Audio) {
-    realTek.execute();
+  } 
+  else if (samusAudio === true && driver === Audio) {
+    setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\csaudiosstcatpt.1.0.1-installer.exe"});})
+  } 
+  else if (realTekAudio === true && driver === Audio) {
+    setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\alc5645 audio.exe"});})
+  }
+  else if (boardname === "Drallion" && driver === Audio) {
+    setTimeout(async() => {invoke('install',{value1:"C:\\tmp\\Realtek-High-Definition-Audio-Driver_266V7_WIN_6.0.9341.1_A13.EXE"});})
   }
   else if(driver === undefined) {
     installFinished();
