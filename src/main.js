@@ -42,11 +42,10 @@ const audioSamus =  Command.sidecar(
   "./binaries/csaudiosstcatpt.1.0.1-installer",
   ["/S"]
 );
-/*
+
 const i2s =  Command.sidecar("./binaries/BayTrailChipsetDriver-Lenovo", [
   "/S",
 ]);
-*/
 const realTek =  Command.sidecar("./binaries/alc5645audio", ["/S"]);
 
 //gets boardname
@@ -196,9 +195,11 @@ function installStatus() {
     process = processName[index];
     installDrivers(process);
     document.getElementById('process').innerText = process;
+    console.log(process)
   } else if (processExists === true && processStatus === 0) {
     process = processName[index];
     //console.log(process);
+    document.getElementById('process').innerText = process;
     processStatus++;
   } else if (processExists === true && processStatus === 1) {
     if (processStatus < 2 || processStatus === 1) {
@@ -209,6 +210,12 @@ function installStatus() {
     index++;
     processStatus = 0;
     //console.log("process-closed");
+  }
+  //sometimes the process exists faster than js can change status
+  else if(processExists === false && processStatus === 1)
+  {
+    index++
+    processStatus = 0;
   }
 }
 
