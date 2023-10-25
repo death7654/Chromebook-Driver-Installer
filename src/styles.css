@@ -1,21 +1,41 @@
+
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  color: white;
+}
 body {
   font-family: "Poppins";
-  background: #050801;
-  color: white;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  overflow: hidden;
+  background: transparent;
+  border-radius: 20px;
+  border: #0c0814 solid 10px;
+  height: 500px;
+ 
+
+}
+.wrapper
+{
+  width: 100%;
+  height: 500px;
+  border-radius: 20px;
 }
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 .title {
-  display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   font-size: 22px;
+  position: absolute;
+  left: 200px;
+  top: 40px;
+  
 }
 
 .disclaimer {
@@ -26,12 +46,10 @@ body {
 }
 
 .installButton {
-  display: flex;
-  height: 100%;
-  width: 100%;
   justify-content: center;
-  position: relative;
-  top: 50px;
+  position: absolute;
+  top: 360px;
+  left: 450px;
 }
 .install {
   padding: 30px 90px;
@@ -49,8 +67,7 @@ body {
 .startInstall {
   background: #2AAA8A;
   color: #050801;
-  box-shadow: 0 0 5px #2AAA8A, 0 0 25px #2AAA8A, 0 0 50px #2AAA8A,
-    0 0 200px #2AAA8A;
+ 
 }
 .startInstall:hover {
   box-shadow: 0 0 20px #21846b, 0 0 100px #21846b, 0 0 200px #21846b,
@@ -59,16 +76,18 @@ body {
 .closeStart {
   padding: 30px 110px;
   position: absolute;
-  top: 150px;
-  left: 235px;
+  top: 0px;
+  left: -410px;
 }
 .mainPage{
+  padding: 0;
+  background-color: #0c0814;
   height: 100%;
 }
 .progressPage {
   width: 100%;
   height: 100%;
-  background: #050801;
+  background-color: #0c0814;
   height: 100%;
   display: none;
 }
@@ -144,7 +163,9 @@ body {
 
 .finished {
   letter-spacing: 4px;
+  background-color: #0c0814;
   display: none;
+  height: 100%;
 }
 .finishedText {
   position: absolute;
@@ -153,7 +174,7 @@ body {
 }
 .finishedThanks {
   position: absolute;
-  top: 360px;
+  top: 340px;
   left: 310px;
 }
 .finishPageButton{
@@ -162,10 +183,9 @@ body {
   top: 200px;
 }
 .finishButton {
-  background: #ee4b2b;
+  background: rgb(232, 70, 38);
   color: #050801;
-  box-shadow: 0 0 5px #ee4b2b, 0 0 25px #ee4b2b, 0 0 50px #ee4b2b,
-    0 0 200px #ee4b2b;
+  
 }
 .finishButton:hover {
   box-shadow: 0 0 20px #9d331d, 0 0 100px #9d331d, 0 0 200px #9d331d,
