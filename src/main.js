@@ -127,7 +127,7 @@ function startDownload() {
   {
     startInstall();
     console.log('completed');
-    document.getElementById("installingtext").innerText = "Installing  "
+    document.getElementById("installingtext").innerText = "Installing";
   }
   },2000);
   document.getElementById("mainPage").style.display = "none";
@@ -195,11 +195,11 @@ function installStatus() {
   } else if (processExists === false && processStatus === 0) {
     process = processName[index];
     installDrivers(process);
-    document.getElementById("process").innerText = process;
+    document.getElementById("installingtext").innerText = "Installing" + " " + process;
     console.log(process);
   } else if (processExists === true && processStatus === 0) {
     process = processName[index];
-    document.getElementById("process").innerText = process;
+    document.getElementById("installingtext").innerText = "Installing" + " " + process;
     processStatus++;
   } else if (processExists === true && processStatus === 1) {
     if (processStatus < 2 || processStatus === 1) {
