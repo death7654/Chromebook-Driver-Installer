@@ -1,7 +1,7 @@
 [package]
-name = "one_click_driver_installs"
-version = "0.0.0"
-description = "installs all avaliable drivers for chromebooks"
+name = "one_click_driver_installer"
+version = "2.0.1"
+description = "One Click Driver Installer"
 authors = ["Robinson Arysseril"]
 license = "GPL-3.0"
 repository = ""

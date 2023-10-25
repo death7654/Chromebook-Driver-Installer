@@ -1889,8 +1889,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd8b5dd2ae5ed71462c540258bedcb51965123ad7e7ccf4b9a8cafaa4a63576d"
 
 [[package]]
-name = "one_click_driver_installs"
-version = "0.0.0"
+name = "one_click_driver_installer"
+version = "2.0.1"
 dependencies = [
  "downloader",
  "serde",
