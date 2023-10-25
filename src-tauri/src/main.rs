@@ -9,7 +9,15 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             on_start,
-            downloader,
+            delete_dir,
+            download_standard,
+            file_check,
+            download_touchscreen,
+            download_cyan,
+            download_max98980,
+            download_samus_audio,
+            download_realtek,
+            download_i2s,
             get_board_name,
             check_process,
             get_hwid,
@@ -22,18 +30,25 @@ fn main() {
 }
 fn create_dir() -> Option<()> {
     use std::fs;
-    let _ = fs::create_dir_all("/tmp").ok()?;
+    let _ = fs::create_dir_all("/oneclicktmp").ok()?;
      Some(())
+  }
+#[tauri::command]
+fn delete_dir() -> Option <()> {
+    use std::fs;
+    let _ = fs::remove_dir_all("/oneclicktmp").ok()?;
+     Some(());
+     std::process::exit(0x0);
   }
 #[tauri::command]
 fn on_start(){
     create_dir();
 }
 #[tauri::command]
-fn downloader(){
+fn download_standard(){
     create_dir();
     let mut downloader = Downloader::builder()
-        .download_folder(std::path::Path::new("/tmp"))
+        .download_folder(std::path::Path::new("/oneclicktmp"))
         .parallel_requests(1)
         .build()
         .unwrap();
@@ -43,7 +58,8 @@ fn downloader(){
     let dl2 = downloader::Download::new(
         "https://github.com/coolstar/driverinstallers/raw/master/crostouchpad/crostouchpad.4.1.4-installer.exe");
 
-    let result = downloader.download(&[dl, dl2]).unwrap();
+    let dl3 = downloader::Download::new("https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.2-installer.exe");
+    let result = downloader.download(&[dl, dl2, dl3]).unwrap();
 
     for r in result {
         match r {
@@ -52,6 +68,127 @@ fn downloader(){
         };
     }
 }
+#[tauri::command]
+async fn file_check() -> String{
+    use std::fs;
+    let file_number = fs::read_dir("C:\\oneclicktmp").unwrap().into_iter().collect::< Vec<_>>().len();
+    return file_number.to_string();
+}
+#[tauri::command]
+fn download_touchscreen(){
+    let mut downloader = Downloader::builder()
+        .download_folder(std::path::Path::new("/oneclicktmp"))
+        .parallel_requests(1)
+        .build()
+        .unwrap();
+
+    let dl = downloader::Download::new("https://github.com/coolstar/driverinstallers/raw/master/crostouchscreen/crostouchscreen.2.9.4-installer.exe");
+
+    let result = downloader.download(&[dl]).unwrap();
+
+    for r in result {
+        match r {
+            Err(e) => print!("Error occurred! {}", e.to_string()),
+            Ok(s) => print!("Success: {}", &s),
+        };
+    }
+}
+#[tauri::command]
+fn download_cyan(){
+    let mut downloader = Downloader::builder()
+        .download_folder(std::path::Path::new("/oneclicktmp"))
+        .parallel_requests(1)
+        .build()
+        .unwrap();
+
+    let dl = downloader::Download::new("https://github.com/coolstar/driverinstallers/raw/master/max98090-r11/max98090-r11.1.0.0-installer.exe");
+
+    let result = downloader.download(&[dl]).unwrap();
+
+    for r in result {
+        match r {
+            Err(e) => print!("Error occurred! {}", e.to_string()),
+            Ok(s) => print!("Success: {}", &s),
+        };
+    }
+}
+#[tauri::command]
+fn download_max98980(){
+    let mut downloader = Downloader::builder()
+        .download_folder(std::path::Path::new("/oneclicktmp"))
+        .parallel_requests(1)
+        .build()
+        .unwrap();
+
+    let dl = downloader::Download::new("https://github.com/coolstar/driverinstallers/raw/master/max98090/max98090.1.0.4-installer.exe");
+
+    let result = downloader.download(&[dl]).unwrap();
+
+    for r in result {
+        match r {
+            Err(e) => print!("Error occurred! {}", e.to_string()),
+            Ok(s) => print!("Success: {}", &s),
+        };
+    }
+}
+#[tauri::command]
+fn download_realtek(){
+    let mut downloader = Downloader::builder()
+        .download_folder(std::path::Path::new("/oneclicktmp"))
+        .parallel_requests(1)
+        .build()
+        .unwrap();
+
+    let dl = downloader::Download::new("https://coolstar.org/chromebook/downloads/drivers/alc5645%20audio.exe");
+
+    let result = downloader.download(&[dl]).unwrap();
+
+    for r in result {
+        match r {
+            Err(e) => print!("Error occurred! {}", e.to_string()),
+            Ok(s) => print!("Success: {}", &s),
+        };
+    }
+}
+#[tauri::command]
+fn download_samus_audio(){
+    let mut downloader = Downloader::builder()
+        .download_folder(std::path::Path::new("/oneclicktmp"))
+        .parallel_requests(1)
+        .build()
+        .unwrap();
+
+    let dl = downloader::Download::new("https://github.com/coolstar/driverinstallers/raw/master/csaudiosstcatpt/csaudiosstcatpt.1.0.1-installer.exe");
+
+    let result = downloader.download(&[dl]).unwrap();
+
+    for r in result {
+        match r {
+            Err(e) => print!("Error occurred! {}", e.to_string()),
+            Ok(s) => print!("Success: {}", &s),
+        };
+    }
+}
+#[tauri::command]
+fn download_i2s(){
+    let mut downloader = Downloader::builder()
+        .download_folder(std::path::Path::new("/oneclicktmp"))
+        .parallel_requests(1)
+        .build()
+        .unwrap();
+
+    let dl = downloader::Download::new("https://coolstar.org/chromebook/downloads/drivers/BayTrailChipsetDriver-Lenovo.exe");
+
+    let result = downloader.download(&[dl]).unwrap();
+
+    for r in result {
+        match r {
+            Err(e) => print!("Error occurred! {}", e.to_string()),
+            Ok(s) => print!("Success: {}", &s),
+        };
+    }
+}
+
 #[tauri::command]
 async fn get_board_name() -> String {
     return match_result_vec(exec("wmic", Some(vec!["baseboard", "get", "Product"])));
@@ -77,7 +214,7 @@ async fn get_hwid() -> String {
 fn download_driver(value1: String){
     create_dir();
     let mut downloader = Downloader::builder()
-        .download_folder(std::path::Path::new("/tmp"))
+        .download_folder(std::path::Path::new("/oneclicktmp"))
         .parallel_requests(1)
         .build()
         .unwrap();
