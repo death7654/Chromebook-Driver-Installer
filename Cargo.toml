@@ -1,10 +1,12 @@
 [package]
 name = "One_Click_Driver_Installer"
-version = "2.0.0"
+version = "3.0.0"
 edition = "2021"
 
 [dependencies]
 downloader = "0.2.8"
-get_user_input = "0.1.1"
+exitfailure = "0.5.1"
+failure = "0.1.8"
 indicatif = "0.17.8"
 inquire = "0.7.5"
+reqwest = "0.12.8"

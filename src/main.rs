@@ -1,7 +1,9 @@
-use downloader::Downloader;
+mod download_files;
+
 use inquire::{self, Confirm};
 use std::{fs, process::exit};
 
+//structure for device info
 struct Device {
     board_name: String,
     device_name: String,
@@ -9,6 +11,15 @@ struct Device {
     cpu_gen: String,
     touchscreen: bool,
 }
+
+const TOUCHSCREENHWID: [&str;4] = [
+  "ACPI\\ATML0001",
+  "ACPI\\ELAN0001",
+  "ACPI\\MLFS0000",
+  "ACPI\\RAYD0001",
+];
+const MAX989090HWID: [&str;2] = ["ACPI\\VEN_193C&DEV_9890&REV_0002", "ACPI\\193C9890"];
+
 
 fn get_hwid() -> String {
     let cmd: Result<std::process::Output, std::io::Error> =
@@ -32,37 +43,18 @@ fn get_hwid() -> String {
     str.trim().to_string()
 }
 
-fn download(link: &str) {
-    let mut downloader = Downloader::builder()
-        .download_folder(std::path::Path::new("/oneclickdriverinstalltemp"))
-        .parallel_requests(1)
-        .build()
-        .unwrap();
-
-    let dl = downloader::Download::new(link);
-
-    let result = downloader.download(&[dl]).unwrap();
-
-    for r in result {
-        match r {
-            Err(e) => print!("Error occurred! {}", e.to_string()),
-            Ok(s) => print!("Success: {}", &s),
-        };
-    }
-}
 fn get_boardname() -> String {
-    let cmd: Result<std::process::Output, std::io::Error> =
-        std::process::Command::new("powershell.exe")
-            .args(vec![
-                "Get-WmiObject",
-                "Win32_PNPEntity",
-                "|",
-                "Select",
-                "DeviceID",
-            ])
-            .output();
+    let cmd: Result<std::process::Output, std::io::Error> = std::process::Command::new("wmic")
+        .args(vec!["baseboard", "get", "product"])
+        .output();
     let str = match cmd {
-        Ok(output) => String::from_utf8_lossy(&output.stdout).to_string(),
+        Ok(output) => String::from_utf8_lossy(&output.stdout)
+            .to_string()
+            .split("\n")
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()[1]
+            .clone(),
+
         Err(e) => {
             let error = &e;
             println!("Error `{}`.", error);
@@ -73,16 +65,35 @@ fn get_boardname() -> String {
 }
 
 fn main() {
-    let agreement = Confirm::new("By using this application you agree to all terms and conditions in every driver you choose to install").with_default(true).prompt();
+    let agreement = Confirm::new("By using this application you agree to all terms and conditions in every driver you choose to install. Do you agree to these terms?").with_default(true).prompt();
     match agreement {
         Ok(true) => {
-            let download_db = Confirm::new("To install your chromebook's drivers a database must be downloaded. Download Database?").with_default(false).prompt();
+            let download_db = Confirm::new("To install your chromebook's drivers a database must be downloaded. Download Database?").with_default(true).prompt();
             match download_db {
                 Ok(true) => {
+                    //creates temporary download directory
                     let _ = fs::create_dir("/oneclickdriverinstalltemp");
-                    download("https://github.com/death7654/ChromebookDatabase/releases/latest/download/chrultrabook.db");
 
-                    let hwid: String = get_hwid();
+                    //downloads database and crashes the app if an error occurs
+                    let success = download_files::download("https://github.com/death7654/ChromebookDatabase/releases/latest/download/chrultrabook.db");
+                    if success == "error"
+                    {
+                        println!("Failed to Download Database. Please restart the program.");
+                        exit(0);
+                    }
+
+                    let boardname = get_boardname();
+                    let hwid = get_hwid().split("\n").map(|x| x.to_string()).collect::<Vec<String>>().clone();
+                    let mut touchscreenexists = false;
+                    for &item in &hwid {
+                        println!("{item}");
+                        if TOUCHSCREENHWID.contains(&item) {
+                            println!("{} exists in both arrays", item);
+                            touchscreenexists = true;
+                        }
+                    };
+                    
+
 
                     let vcredist = Confirm::new("Download VC-Redist?")
                         .with_default(true)
@@ -94,6 +105,7 @@ fn main() {
                     match cleanup {
                         Ok(true) => {
                             let _ = fs::remove_dir_all("/oneclickdriverinstalltemp");
+
                         }
                         Ok(false) => {
                             println!(
