@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "foo"
-version = "0.1.0"
+name = "One_Click_Driver_Installer"
+version = "2.0.0"
