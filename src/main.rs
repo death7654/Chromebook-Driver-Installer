@@ -78,8 +78,7 @@ fn close() {
     }
     exit(0);
 }
-fn setup_installation()
-{
+fn setup_installation() {
     //creates temporary download directory
     let _ = fs::create_dir("/oneclickdriverinstalltemp");
 
@@ -103,26 +102,35 @@ fn setup_installation()
     }
 
     let boardname = get_boardname();
-    let hwid = get_hwid()
+    let mut hwid = get_hwid()
         .split("\n")
-        .map(|x| x.to_string())
+        .map(|x| x.trim().to_string())
         .collect::<Vec<String>>()
         .clone();
+
+    for string in &mut hwid {
+        // Check if the word has at least 3 characters
+        if string.len() >= 3 {
+            string.truncate(string.len() - 2);
+        }
+    }
+
     let mut touchscreenexists = false;
-    let touchscreenhwid= ["ACPI\\ATML0001","ACPI\\MLFS0000","ACPI\\RAYD0001", "ACPI\\ELAN0001"];
+    let touchscreenhwid = [
+        "ACPI\\ATML0001",
+        "ACPI\\MLFS0000",
+        "ACPI\\RAYD0001",
+        "ACPI\\ELAN0001",
+    ];
     let mut counter = 0;
     println!("{:#?}", hwid.iter());
 
-    while counter < touchscreenhwid.len()
-    {
-        if hwid.iter().any(|s| s == &touchscreenhwid[counter].to_string())
-        {
+    while counter < touchscreenhwid.len() {
+        if hwid.contains(&touchscreenhwid[counter].to_string()) {
             touchscreenexists = true;
-        }
-        else {
-            println!("touchscreen not found with device id {}", touchscreenhwid[counter]);
-            println!("not_found");
-            counter+=1;
+            break;
+        } else {
+            counter += 1;
         }
     }
     println!("touchscreen? {}", touchscreenexists);
@@ -143,9 +151,7 @@ fn setup_installation()
                         println!("Failed to Download File. Trying again... 3/3");
                         success = download_files::download(VCREDIST);
                         if success == "error" {
-                            println!(
-                                "Unable to download file. Please try again later."
-                            );
+                            println!("Unable to download file. Please try again later.");
                             close();
                         }
                     }
@@ -187,4 +193,3 @@ fn main() {
         }
     }
 }
-
