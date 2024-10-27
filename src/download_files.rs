@@ -7,9 +7,9 @@ use indicatif::{ProgressBar, ProgressState, ProgressStyle};
 
 // Define a custom progress reporter:
 struct SimpleReporterPrivate {
-    last_update: std::time::Instant,
+    _last_update: std::time::Instant,
     max_progress: Option<u64>,
-    message: String,
+    _message: String,
 }
 struct SimpleReporter {
     private: std::sync::Mutex<Option<SimpleReporterPrivate>>,
@@ -26,16 +26,16 @@ impl SimpleReporter {
 impl downloader::progress::Reporter for SimpleReporter {
     fn setup(&self, max_progress: Option<u64>, message: &str) {
         let private = SimpleReporterPrivate {
-            last_update: std::time::Instant::now(),
+            _last_update: std::time::Instant::now(),
             max_progress,
-            message: message.to_owned(),
+            _message: message.to_owned(),
         };
 
         let mut guard = self.private.lock().unwrap();
         *guard = Some(private);
     }
 
-    fn progress(&self, current: u64) {
+    fn progress(&self, _current: u64) {
         if let Some(p) = self.private.lock().unwrap().as_mut() {
             let max_bytes = match p.max_progress {
                 Some(bytes) => format!("{:?}", bytes),
@@ -70,7 +70,7 @@ impl downloader::progress::Reporter for SimpleReporter {
     }
 }
 
-pub fn download(link: &str) -> String{
+pub fn download(link: &str) -> String {
     let mut downloader = Downloader::builder()
         .download_folder(std::path::Path::new("/oneclickdriverinstalltemp"))
         .parallel_requests(1)
@@ -87,12 +87,12 @@ pub fn download(link: &str) -> String{
     for r in result {
         match r {
             Err(e) => {
-                println!("Error: {}", e.to_string()); 
-            },
+                println!("Error: {}", e.to_string());
+            }
             Ok(s) => {
-                println!("Success: {}", &s); 
+                println!("Success: {}", &s);
                 downloaded = "success".to_string();
-            },
+            }
         };
     }
     return downloaded;
