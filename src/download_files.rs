@@ -1,99 +1,48 @@
-use downloader::Downloader;
-use std::thread;
-use std::time::Duration;
-use std::{cmp::min, fmt::Write};
+use std::cmp::min;
+use std::fs::File;
+use std::io::Write;
 
-use indicatif::{ProgressBar, ProgressState, ProgressStyle};
+use reqwest::Client;
+use indicatif::{ProgressBar, ProgressStyle};
+use futures_util::StreamExt;
 
-// Define a custom progress reporter:
-struct SimpleReporterPrivate {
-    _last_update: std::time::Instant,
-    max_progress: Option<u64>,
-    _message: String,
-}
-struct SimpleReporter {
-    private: std::sync::Mutex<Option<SimpleReporterPrivate>>,
-}
 
-impl SimpleReporter {
-    fn create() -> std::sync::Arc<Self> {
-        std::sync::Arc::new(Self {
-            private: std::sync::Mutex::new(None),
-        })
-    }
-}
-
-impl downloader::progress::Reporter for SimpleReporter {
-    fn setup(&self, max_progress: Option<u64>, message: &str) {
-        let private = SimpleReporterPrivate {
-            _last_update: std::time::Instant::now(),
-            max_progress,
-            _message: message.to_owned(),
-        };
-
-        let mut guard = self.private.lock().unwrap();
-        *guard = Some(private);
-    }
-
-    fn progress(&self, _current: u64) {
-        if let Some(p) = self.private.lock().unwrap().as_mut() {
-            let max_bytes = match p.max_progress {
-                Some(bytes) => format!("{:?}", bytes),
-                None => "{unknown}".to_owned(),
-            };
-            let bytes = max_bytes.parse::<u64>().unwrap();
-            let mut downloaded = 0;
-
-            let pb = ProgressBar::new(bytes);
-            pb.set_style(ProgressStyle::with_template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({eta})")
-        .unwrap()
-        .with_key("eta", |state: &ProgressState, w: &mut dyn Write| write!(w, "{:.1}s", state.eta().as_secs_f64()).unwrap())
+pub async fn download(url: &str, path: &str) -> Result<(), String> {
+    println!("path: {path}");
+    // Reqwest setup
+    let url_copy = &url;
+    println!("{url_copy}");
+    let client = Client::new();
+    let res = client
+        .get(url)
+        .send()
+        .await
+        .or(Err(format!("Failed to GET from '{}'", &url)))?;
+    let total_size = res
+        .content_length()
+        .ok_or(format!("Failed to get content length from '{}'", &url))?;
+    
+    // Indicatif setup
+    let pb = ProgressBar::new(total_size);
+    pb.set_style(ProgressStyle::default_bar()
+        .template("{msg}\n{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
         .progress_chars("#>-"));
+    pb.set_message(&format!("Downloading {}", url_copy));
 
-            while downloaded < bytes {
-                let new = min(downloaded + 223211, bytes);
-                downloaded = new;
-                pb.set_position(new);
-                thread::sleep(Duration::from_millis(12));
-            }
-        }
+    // download chunks
+    let mut file = File::create(path).or(Err(format!("Failed to create file '{}'", path)))?;
+    let mut downloaded: u64 = 0;
+    let mut stream = res.bytes_stream();
+
+    while let Some(item) = stream.next().await {
+        let chunk = item.or(Err(format!("Error while downloading file")))?;
+        file.write_all(&chunk)
+            .or(Err(format!("Error while writing to file")))?;
+        let new = min(downloaded + (chunk.len() as u64), total_size);
+        downloaded = new;
+        pb.set_position(new);
     }
 
-    fn set_message(&self, _message: &str) {
-        //println!("test file: Message changed to: {}", message);
-    }
-
-    fn done(&self) {
-        let mut guard = self.private.lock().unwrap();
-        *guard = None;
-        //println!("test file: [DONE]");
-    }
-}
-
-pub fn download(link: &str) -> String {
-    let mut downloader = Downloader::builder()
-        .download_folder(std::path::Path::new("/oneclickdriverinstalltemp"))
-        .parallel_requests(1)
-        .build()
-        .unwrap();
-
-    let dl = downloader::Download::new(link);
-
-    let dl = dl.progress(SimpleReporter::create());
-
-    let result = downloader.download(&[dl]).unwrap();
-
-    let mut downloaded = "error".to_string();
-    for r in result {
-        match r {
-            Err(e) => {
-                println!("Error: {}", e.to_string());
-            }
-            Ok(s) => {
-                println!("Success: {}", &s);
-                downloaded = "success".to_string();
-            }
-        };
-    }
-    return downloaded;
+    pb.finish_with_message(&format!("Downloaded {} to {}", url_copy, path));
+    return Ok(());
 }

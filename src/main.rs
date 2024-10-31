@@ -15,9 +15,11 @@ const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/chrultrabook.db";
 const VCREDIST: &str = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
 
+//hwid ids
 const MAX989090HWID: [&str; 2] = ["ACPI\\VEN_193C&DEV_9890&REV_0002", "ACPI\\193C9890"];
+const TOUCHSCREENHWID: [&str; 4] = ["ACPI\\ATML0001","ACPI\\MLFS0000","ACPI\\RAYD0001","ACPI\\ELAN0001"];
 
-fn get_hwid() -> String {
+fn get_hwid() -> Vec<String> {
     let cmd: Result<std::process::Output, std::io::Error> =
         std::process::Command::new("powershell.exe")
             .args(vec![
@@ -33,10 +35,17 @@ fn get_hwid() -> String {
         Err(e) => {
             let error = &e;
             println!("Error `{}`.", error);
-            return "Error".to_string();
+            return vec!["Error".to_string()];
         }
     };
-    str.trim().to_string()
+    let mut hwid = str.trim().to_string().split("\n").map(|x| x.trim().to_string()).collect::<Vec<String>>().clone();
+    for string in &mut hwid {
+        // Check if the word has at least 3 characters
+        if string.len() >= 3 {
+            string.truncate(string.len() - 2);
+        }
+    }
+    return hwid;
 }
 
 fn get_boardname() -> String {
@@ -59,6 +68,48 @@ fn get_boardname() -> String {
     };
     str.trim().to_string()
 }
+async fn setup_installation() {
+    //creates temporary download directory
+    let _ = fs::create_dir_all("/oneclickdriverinstalltemp/drivers");
+    let _ = fs::create_dir("/oneclickdriverinstalltemp/database");
+
+    //downloads database
+    let _ = download_files::download(&DATABASE, "C:/oneclickdriverinstalltemp/database/database.db").await;
+
+    let _boardname: String = get_boardname();
+    let hwid: Vec<String> = get_hwid();
+
+    let mut touchscreenexists = false;
+
+    let mut counter = 0;
+    //println!("{:#?}", hwid.iter());
+
+    while counter < TOUCHSCREENHWID.len() {
+        if hwid.contains(&TOUCHSCREENHWID[counter].to_string()) {
+            touchscreenexists = true;
+            break;
+        } else {
+            counter += 1;
+        }
+    }
+    println!("touchscreen? {}", touchscreenexists);
+
+    let vcredist = Confirm::new("Download VC-Redist? (Required for all drivers)")
+        .with_default(true)
+        .prompt();
+    match vcredist {
+        Ok(true) => {
+            let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
+        }
+        Ok(false) => {
+            println!("Make sure VCREDIST is installed or in C:\\oneclickdriverinstalltemp before you install other drivers")
+        }
+        Err(_) => {
+            println!("An Error has occured please try again")
+        }
+    }
+}
+
 fn close() {
     let cleanup = Confirm::new("Cleanup Downloaded Data?")
         .with_default(true)
@@ -78,103 +129,16 @@ fn close() {
     }
     exit(0);
 }
-fn setup_installation() {
-    //creates temporary download directory
-    let _ = fs::create_dir("/oneclickdriverinstalltemp");
 
-    //downloads database and crashes the app if an error occurs
-    let mut success = download_files::download(DATABASE);
-    if success == "error" {
-        println!("Failed To Download File. Trying again... 1/3");
-        success = download_files::download(DATABASE);
-        if success == "error" {
-            println!("Failed To Download File. Trying again... 2/3");
-            success = download_files::download(DATABASE);
-            if success == "error" {
-                println!("Failed To Download File. Trying again... 3/3");
-                success = download_files::download(DATABASE);
-                if success == "error" {
-                    println!("Unable to download file. Please try again later.");
-                    close();
-                }
-            }
-        }
-    }
-
-    let boardname = get_boardname();
-    let mut hwid = get_hwid()
-        .split("\n")
-        .map(|x| x.trim().to_string())
-        .collect::<Vec<String>>()
-        .clone();
-
-    for string in &mut hwid {
-        // Check if the word has at least 3 characters
-        if string.len() >= 3 {
-            string.truncate(string.len() - 2);
-        }
-    }
-
-    let mut touchscreenexists = false;
-    let touchscreenhwid = [
-        "ACPI\\ATML0001",
-        "ACPI\\MLFS0000",
-        "ACPI\\RAYD0001",
-        "ACPI\\ELAN0001",
-    ];
-    let mut counter = 0;
-    println!("{:#?}", hwid.iter());
-
-    while counter < touchscreenhwid.len() {
-        if hwid.contains(&touchscreenhwid[counter].to_string()) {
-            touchscreenexists = true;
-            break;
-        } else {
-            counter += 1;
-        }
-    }
-    println!("touchscreen? {}", touchscreenexists);
-
-    let vcredist = Confirm::new("Download VC-Redist? (Required for all drivers)")
-        .with_default(true)
-        .prompt();
-    match vcredist {
-        Ok(true) => {
-            let mut success = download_files::download(VCREDIST);
-            if success == "error" {
-                println!("Failed to Download File. Trying again... 1/3");
-                success = download_files::download(VCREDIST);
-                if success == "error" {
-                    println!("Failed to Download File. Trying again... 2/3");
-                    success = download_files::download(VCREDIST);
-                    if success == "error" {
-                        println!("Failed to Download File. Trying again... 3/3");
-                        success = download_files::download(VCREDIST);
-                        if success == "error" {
-                            println!("Unable to download file. Please try again later.");
-                            close();
-                        }
-                    }
-                }
-            }
-        }
-        Ok(false) => {
-            println!("Make sure VCREDIST is installed or in C:\\oneclickdriverinstalltemp before you install other drivers")
-        }
-        Err(_) => {
-            println!("An Error has occured please try again")
-        }
-    }
-}
-
-fn main() {
+#[tokio::main]
+async fn main() {
     let agreement = Confirm::new("By using this application you agree to all terms and conditions in every driver you choose to install. Do you agree to these terms?").with_default(true).prompt();
     match agreement {
         Ok(true) => {
             let download_db = Confirm::new("To install your chromebook's drivers a database must be downloaded. Download Database?").with_default(true).prompt();
             match download_db {
                 Ok(true) => {
-                    setup_installation();
+                    let _ = setup_installation().await;
                     close();
                 }
                 Ok(false) => {
