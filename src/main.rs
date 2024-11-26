@@ -12,12 +12,26 @@ struct Device {
     touchscreen: bool,
 }
 const DATABASE: &str =
-    "https://github.com/death7654/ChromebookDatabase/releases/latest/download/chrultrabook.db";
+    "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
+const DATABASE_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/database.json";
+
 const VCREDIST: &str = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
+
+const TOUCHPAD: &str = "https://github.com/coolstar/driverinstallers/raw/master/crostouchpad/crostouchpad.4.1.6-installer.exe";
+const TOUCHSCREEN: &str = "https://github.com/coolstar/driverinstallers/raw/master/crostouchscreen/crostouchscreen.2.9.5-installer.exe";
+const EC: &str =
+    "https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.6-installer.exe";
+const CR50: &str =
+    "https://github.com/coolstar/driverinstallers/raw/master/cr50/cr50.1.0.1-installer.exe";
 
 //hwid ids
 const MAX989090HWID: [&str; 2] = ["ACPI\\VEN_193C&DEV_9890&REV_0002", "ACPI\\193C9890"];
-const TOUCHSCREENHWID: [&str; 4] = ["ACPI\\ATML0001","ACPI\\MLFS0000","ACPI\\RAYD0001","ACPI\\ELAN0001"];
+const TOUCHSCREENHWID: [&str; 4] = [
+    "ACPI\\ATML0001",
+    "ACPI\\MLFS0000",
+    "ACPI\\RAYD0001",
+    "ACPI\\ELAN0001",
+];
 
 fn get_hwid() -> Vec<String> {
     let cmd: Result<std::process::Output, std::io::Error> =
@@ -38,7 +52,13 @@ fn get_hwid() -> Vec<String> {
             return vec!["Error".to_string()];
         }
     };
-    let mut hwid = str.trim().to_string().split("\n").map(|x| x.trim().to_string()).collect::<Vec<String>>().clone();
+    let mut hwid = str
+        .trim()
+        .to_string()
+        .split("\n")
+        .map(|x| x.trim().to_string())
+        .collect::<Vec<String>>()
+        .clone();
     for string in &mut hwid {
         // Check if the word has at least 3 characters
         if string.len() >= 3 {
@@ -74,13 +94,13 @@ async fn setup_installation() {
     let _ = fs::create_dir("/oneclickdriverinstalltemp/database");
 
     //downloads database
-    let _ = download_files::download(&DATABASE, "C:/oneclickdriverinstalltemp/database/database.db").await;
+    let _ = download_files::download(&DATABASE, DATABASE_FILE_PATH).await;
 
     let _boardname: String = get_boardname();
     let hwid: Vec<String> = get_hwid();
+    let mut id = 0;
 
     let mut touchscreenexists = false;
-
     let mut counter = 0;
     //println!("{:#?}", hwid.iter());
 
@@ -94,12 +114,15 @@ async fn setup_installation() {
     }
     println!("touchscreen? {}", touchscreenexists);
 
+    let mut download_vector = vec![];
+
     let vcredist = Confirm::new("Download VC-Redist? (Required for all drivers)")
         .with_default(true)
         .prompt();
     match vcredist {
         Ok(true) => {
-            let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
+            //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
+            download_vector.push(VCREDIST)
         }
         Ok(false) => {
             println!("Make sure VCREDIST is installed or in C:\\oneclickdriverinstalltemp before you install other drivers")
@@ -108,6 +131,42 @@ async fn setup_installation() {
             println!("An Error has occured please try again")
         }
     }
+    let touchpad = Confirm::new("Download touchpad drivers?")
+        .with_default(true)
+        .prompt();
+    match touchpad {
+        Ok(true) => {
+            //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
+            download_vector.push(TOUCHSCREEN)
+        }
+        Ok(false) => {
+            println!("")
+        }
+        Err(_) => {
+            println!("An Error has occured please try again")
+        }
+    }
+
+    if touchscreenexists == true {
+        let touchscreen = Confirm::new("Download touchscreen drivers?")
+            .with_default(true)
+            .prompt();
+
+        match touchscreen {
+            Ok(true) => {
+                //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
+                download_vector.push(TOUCHSCREEN)
+            }
+            Ok(false) => {
+                println!("")
+            }
+            Err(_) => {
+                println!("An Error has occured please try again")
+            }
+        }
+    }
+
+    //downloading section
 }
 
 fn close() {
@@ -139,6 +198,7 @@ async fn main() {
             match download_db {
                 Ok(true) => {
                     let _ = setup_installation().await;
+                    //when complete add win32_notif crate
                     close();
                 }
                 Ok(false) => {

@@ -2,10 +2,9 @@ use std::cmp::min;
 use std::fs::File;
 use std::io::Write;
 
-use reqwest::Client;
-use indicatif::{ProgressBar, ProgressStyle};
 use futures_util::StreamExt;
-
+use indicatif::{ProgressBar, ProgressStyle};
+use reqwest::Client;
 
 pub async fn download(url: &str, path: &str) -> Result<(), String> {
     println!("path: {path}");
@@ -21,7 +20,7 @@ pub async fn download(url: &str, path: &str) -> Result<(), String> {
     let total_size = res
         .content_length()
         .ok_or(format!("Failed to get content length from '{}'", &url))?;
-    
+
     // Indicatif setup
     let pb = ProgressBar::new(total_size);
     pb.set_style(ProgressStyle::default_bar()
