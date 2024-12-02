@@ -10,7 +10,6 @@ pub async fn download(url: &str, path: &str) -> Result<(), String> {
     println!("path: {path}");
     // Reqwest setup
     let url_copy = &url;
-    println!("{url_copy}");
     let client = Client::new();
     let res = client
         .get(url)

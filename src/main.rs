@@ -1,5 +1,6 @@
 mod download_files;
 
+use terminal_link::Link;
 use inquire::{self, Confirm};
 use std::{fs, process::exit};
 
@@ -88,6 +89,7 @@ fn get_boardname() -> String {
     };
     str.trim().to_string()
 }
+
 async fn setup_installation() {
     //creates temporary download directory
     let _ = fs::create_dir_all("/oneclickdriverinstalltemp/drivers");
@@ -97,14 +99,13 @@ async fn setup_installation() {
     let _ = download_files::download(&DATABASE, DATABASE_FILE_PATH).await;
 
     let _boardname: String = get_boardname();
-    let hwid: Vec<String> = get_hwid();
-    let mut id = 0;
+    let hwid: Vec<String> = get_hwid(); //physical device hardware id (elan0001)
 
     let mut touchscreenexists = false;
     let mut counter = 0;
     //println!("{:#?}", hwid.iter());
 
-    while counter < TOUCHSCREENHWID.len() {
+    while counter < TOUCHSCREENHWID.len() + 1 {
         if hwid.contains(&TOUCHSCREENHWID[counter].to_string()) {
             touchscreenexists = true;
             break;
@@ -112,7 +113,7 @@ async fn setup_installation() {
             counter += 1;
         }
     }
-    println!("touchscreen? {}", touchscreenexists);
+    //println!("touchscreen? {}", touchscreenexists);
 
     let mut download_vector = vec![];
 
@@ -146,6 +147,21 @@ async fn setup_installation() {
             println!("An Error has occured please try again")
         }
     }
+    let ec = Confirm::new("Download ec driver?")
+        .with_default(true)
+        .prompt();
+    match ec {
+        Ok(true) => {
+            //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
+            download_vector.push(EC)
+        }
+        Ok(false) => {
+            println!("")
+        }
+        Err(_) => {
+            println!("An Error has occured please try again")
+        }
+    }
 
     if touchscreenexists == true {
         let touchscreen = Confirm::new("Download touchscreen drivers?")
@@ -164,6 +180,11 @@ async fn setup_installation() {
                 println!("An Error has occured please try again")
             }
         }
+    //newer chromebooks 
+    //todo get the json board name searching working. 
+    let ax211_wifi = Link::new("ax211_wifi", "https://www.intel.com/content/www/us/en/download/19351/intel-wireless-wi-fi-drivers-for-windows-10-and-windows-11.html");
+    println!("Due to Legal Constraints, Please download the driver and move it to C:/oneclickdriverinstalltemp \n\n{}", ax211_wifi);
+
     }
 
     //downloading section

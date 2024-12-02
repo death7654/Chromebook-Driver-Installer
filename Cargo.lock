@@ -12,6 +12,8 @@ dependencies = [
  "indicatif",
  "inquire",
  "reqwest",
+ "serde_json",
+ "terminal-link",
  "tokio",
 ]
 
@@ -1041,9 +1043,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.132"
+version = "1.0.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d726bfaff4b320266d395898905d0eba0345aae23b54aee3a737e260fd46db03"
+checksum = "c7fceb2473b9166b2294ef05efcb65a3db80803f0b03ef86a5fc88a2b85ee377"
 dependencies = [
  "itoa",
  "memchr",
@@ -1212,6 +1214,12 @@ dependencies = [
  "rustix",
  "windows-sys 0.59.0",
 ]
+
+[[package]]
+name = "terminal-link"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "253bcead4f3aa96243b0f8fa46f9010e87ca23bd5d0c723d474ff1d2417bbdf8"
 
 [[package]]
 name = "thread_local"
