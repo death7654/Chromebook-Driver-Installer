@@ -101,6 +101,8 @@ async fn setup_installation() {
     let _boardname: String = get_boardname();
     let hwid: Vec<String> = get_hwid(); //physical device hardware id (elan0001)
 
+
+
     let mut touchscreenexists = false;
     let mut counter = 0;
     //println!("{:#?}", hwid.iter());
@@ -122,7 +124,6 @@ async fn setup_installation() {
         .prompt();
     match vcredist {
         Ok(true) => {
-            //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
             download_vector.push(VCREDIST)
         }
         Ok(false) => {
@@ -137,8 +138,7 @@ async fn setup_installation() {
         .prompt();
     match touchpad {
         Ok(true) => {
-            //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
-            download_vector.push(TOUCHSCREEN)
+            download_vector.push(TOUCHPAD)
         }
         Ok(false) => {
             println!("")
@@ -152,7 +152,6 @@ async fn setup_installation() {
         .prompt();
     match ec {
         Ok(true) => {
-            //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
             download_vector.push(EC)
         }
         Ok(false) => {
@@ -170,7 +169,6 @@ async fn setup_installation() {
 
         match touchscreen {
             Ok(true) => {
-                //let _ = download_files::download(&VCREDIST,"C:/oneclickdriverinstalltemp/drivers/AAvcc.exe").await;
                 download_vector.push(TOUCHSCREEN)
             }
             Ok(false) => {
