@@ -3,6 +3,9 @@ mod download_files;
 use terminal_link::Link;
 use inquire::{self, Confirm};
 use std::{fs, process::exit};
+use std::process::{Command, Stdio};
+use execute::{Execute, shell};
+
 
 //structure for device info
 struct Device {
@@ -24,6 +27,9 @@ const EC: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.6-installer.exe";
 const CR50: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/cr50/cr50.1.0.1-installer.exe";
+const AX211: &str = "https://www.intel.com/content/www/us/en/download/19351/intel-wireless-wi-fi-drivers-for-windows-10-and-windows-11.html";
+const XE_GRAPHICS: &str = "";
+const AUTO_INSTALL_INTEL_CHIPSET_PS1: &str = "https://raw.githubusercontent.com/coolstar/driverinstallers/master/autoinstall-intel.zip";
 
 //hwid ids
 const MAX989090HWID: [&str; 2] = ["ACPI\\VEN_193C&DEV_9890&REV_0002", "ACPI\\193C9890"];
@@ -180,7 +186,7 @@ async fn setup_installation() {
         }
     //newer chromebooks 
     //todo get the json board name searching working. 
-    let ax211_wifi = Link::new("ax211_wifi", "https://www.intel.com/content/www/us/en/download/19351/intel-wireless-wi-fi-drivers-for-windows-10-and-windows-11.html");
+    let ax211_wifi = Link::new("ax211_wifi", AX211);
     println!("Due to Legal Constraints, Please download the driver and move it to C:/oneclickdriverinstalltemp \n\n{}", ax211_wifi);
 
     }
