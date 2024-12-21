@@ -65,6 +65,8 @@ const TOUCHSCREENHWID: [&str; 4] = [
 const AUTO_INSTALL_INTEL_CHIPSET_PS1: &str =
     "https://raw.githubusercontent.com/coolstar/driverinstallers/master/autoinstall-intel.zip";
 
+const CHRULTRABOOK_TOOLS: &str = "https://github.com/death7654/Chrultrabook-Tools/releases/download/3.0.1/chrultrabook-tools_3.0.1_x64_en-US.msi";
+
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 struct Chromebook {
     cpu_codename: String,
@@ -427,6 +429,21 @@ async fn setup_installation() -> Vec<String> {
             driver_purchase
         );
     }
+    let chrultrabook_tools = Confirm::new("Download Chrultrabook Tools?")
+    .with_default(true)
+    .prompt();
+
+    match chrultrabook_tools {
+        Ok(true) => {
+            download_vector.push(CHRULTRABOOK_TOOLS);
+        }
+        Ok(false) => {}
+        Err(_) => {
+            println!("An Error has occured please try again");
+            exit(0)
+        }
+    }
+
 
     //downloading section
     return helper::to_vec_string(download_vector);
