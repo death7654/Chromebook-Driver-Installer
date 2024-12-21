@@ -22,12 +22,14 @@ const TOUCHPAD: &str = "https://github.com/coolstar/driverinstallers/raw/master/
 const TOUCHSCREEN: &str = "https://github.com/coolstar/driverinstallers/raw/master/crostouchscreen/crostouchscreen.2.9.5-installer.exe";
 const EC: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.6-installer.exe";
+const WILCO_EC: &str = "https://github.com/coolstar/driverinstallers/raw/master/wilcoec/wilcoec.1.0.2-installer.exe";
 const CR50: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/cr50/cr50.1.0.1-installer.exe";
 
 const MAXIM989090: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/max98090/max98090.1.0.4-installer.exe";
 const RYZEN3000AUDIO: &str = "https://github.com/coolstar/driverinstallers/raw/master/csaudioacp3x/csaudioacp3x.1.0.4-installer.exe";
+const DRALLION_AUDIO: &str = "https://dl.dell.com/FOLDER08469300M/2/Realtek-High-Definition-Audio-Driver_266V7_WIN_6.0.9341.1_A13.EXE";
 
 const LINKI2C: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/gmbusi2c/gmbusi2c.1.0-installer.exe";
@@ -444,6 +446,25 @@ async fn setup_installation() {
             }
         }
     }
+    if chromebooks.board_name == "Drallion"
+    {
+        let audio = Confirm::new("Download the audio driver?")
+            .with_default(true)
+            .prompt();
+
+        match audio {
+            Ok(true) => {
+                download_vector.push(DRALLION_AUDIO);
+            }
+            Ok(false) => {}
+            Err(_) => {
+                println!("An Error has occured please try again");
+                exit(0)
+            }
+        }
+        download_vector.retain(|f| *f != EC);
+        download_vector.push(WILCO_EC)
+    }
     if chromebooks.avaliable_drivers.contains("cAVS")
         || chromebooks.avaliable_drivers.contains("cSOF")
         || chromebooks.avaliable_drivers.contains("sof")
@@ -459,6 +480,10 @@ async fn setup_installation() {
 
     //downloading section
     download_relay(download_vector).await;
+}
+fn install()
+{
+    
 }
 fn close() {
     let cleanup = Confirm::new("Cleanup Downloaded Data?")
