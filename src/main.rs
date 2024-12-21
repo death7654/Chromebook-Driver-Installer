@@ -202,8 +202,7 @@ async fn setup_installation() {
             Err(_) => exit(0),
         }
     }
-    if chromebooks.board_name == "Stout"
-    {
+    if chromebooks.board_name == "Stout" {
         println!("Your Chromebook Has No Avaliable Drivers. The Program will now exit");
         exit(0);
     }
@@ -389,22 +388,23 @@ async fn setup_installation() {
             }
         }
     }
-    if chromebooks.avaliable_drivers.contains("ryzen3000-audio")
-    {
+    if chromebooks.avaliable_drivers.contains("ryzen3000-audio") {
         let ryzen3000 = Confirm::new("Download the Ryzen 3000 audio driver?")
-        .with_default(true)
-        .prompt();
+            .with_default(true)
+            .prompt();
 
-    match ryzen3000 {
-        Ok(true) => download_vector.push(RYZEN3000AUDIO),
-        Ok(false) => {}
-        Err(_) => {
-            println!("An Error has occured please try again");
-            exit(0)
+        match ryzen3000 {
+            Ok(true) => download_vector.push(RYZEN3000AUDIO),
+            Ok(false) => {}
+            Err(_) => {
+                println!("An Error has occured please try again");
+                exit(0)
+            }
         }
     }
-}
-    if chromebooks.avaliable_drivers.contains("rapid-storage-cometlake")
+    if chromebooks
+        .avaliable_drivers
+        .contains("rapid-storage-cometlake")
     {
         let graphics = Link::new("Rapid Storage download link", COMETLAKE_RAPID_STORAGE);
         println!("Due to Legal Constraints, Please download the Rapid Storage and move it to C:/oneclickdriverinstalltemp \n\n{}", graphics);
