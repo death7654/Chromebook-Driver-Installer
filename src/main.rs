@@ -14,6 +14,10 @@ use execute::{Execute, shell};
 
 use zip_extract;
 
+use std::process::{ExitStatus};
+use std::thread::sleep;
+use std::time::Duration;
+
 const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
 const DATABASE_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/database.json";
@@ -426,59 +430,30 @@ async fn setup_installation() -> Vec<String> {
     return helper::to_vec_string(download_vector);
 }
 
-fn check_process(value1: &String) -> bool {
-    let system = System::new_all();
 
-    system
-        .processes()
-        .into_iter()
-        .find(|(_, process)| {
-            process.name() == value1
-        })
-        .is_some()
-}
-fn execute(program: &String)
-{
-    let mut command = shell("C:\\oneclickdriverinstalltemp\\drivers\\".to_owned() + &program);
-    command.stdout(Stdio::piped());
-
-let output = command.execute_output().unwrap();
-
-}
+fn start_and_wait(program: &str) -> std::io::Result<ExitStatus> {
+    let mut child = Command::new(program).spawn()?;
+    child.wait()
+} 
 async fn install(length: u8)
 {
-    let mut index = 0;
-    let mut process_exists = false;
-    let mut process_status = 0;
-    let mut process = String::new();
-    while index < length {
-        process = index.to_string() + &".exe";
-        execute(&process);
-        index +=1;
-        process_status +=1;
-        if process_exists == false && process_status == 0 {
-            execute(&process);
-          } else if process_exists == true && process_status == 0 {
-            process_status+=1;
-          } else if process_exists == true && process_status == 1 {
-            if process_status < 2 || process_status == 1 {
-                process_status+=1;
-            }
-          } else if process_exists == false && process_status == 2 {
-            index+=1;
-            process_status = 0;
-          }
-          else if process_exists == false && process_status == 1 {
-            index+=1;
-            process_status = 0;
-          }
-          println!("{}", index);
-          println!("{}", process_exists);
-          println!("{}", process_status);
-          println!("{}", &process);
-        }
-
+    let mut programs = Vec::new();
+    for i in 0..length
+    {
+        programs.push("C:\\oneclickdriverinstalltemp\\drivers\\".to_owned() +&i.to_string()+".exe");
     }
+    println!("{:#?}", programs);
+
+    for program in &programs {
+        println!("Starting: {}", program);
+        let status = start_and_wait(program);
+        match status {
+            Ok(exit) => println!("{} exited with status: {:?}", program, exit),
+            Err(e) => eprintln!("Failed to start {}: {}", program, e),
+        }
+        sleep(Duration::from_secs(2)); // Delay between starting programs
+    }
+}
 fn close() {
     let cleanup = Confirm::new("Cleanup Downloaded Data?")
         .with_default(true)
