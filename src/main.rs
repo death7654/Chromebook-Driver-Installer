@@ -1,7 +1,6 @@
 mod download_files;
+mod helper;
 
-use execute::generic_array::typenum::{int, False};
-use execute::{shell, Execute};
 use inquire::{self, Confirm};
 use serde_json::Value;
 use std::fs::File;
@@ -10,6 +9,9 @@ use std::process::{Command, Stdio};
 use std::vec;
 use std::{fs, process::exit};
 use terminal_link::Link;
+use sysinfo::{System, SystemExt, ProcessExt};
+use execute::{Execute, shell};
+
 use zip_extract;
 
 const DATABASE: &str =
@@ -70,81 +72,23 @@ struct Chromebook {
     touchscreen: bool,
 }
 
-fn get_hwid() -> Vec<String> {
-    let cmd: Result<std::process::Output, std::io::Error> =
-        std::process::Command::new("powershell.exe")
-            .args(vec![
-                "Get-WmiObject",
-                "Win32_PNPEntity",
-                "|",
-                "Select",
-                "DeviceID",
-            ])
-            .output();
-    let str = match cmd {
-        Ok(output) => String::from_utf8_lossy(&output.stdout).to_string(),
-        Err(e) => {
-            let error = &e;
-            println!("Error `{}`.", error);
-            return vec!["Error".to_string()];
-        }
-    };
-    let mut hwid = str
-        .trim()
-        .to_string()
-        .split("\n")
-        .map(|x| x.trim().to_string())
-        .collect::<Vec<String>>()
-        .clone();
-    for string in &mut hwid {
-        // Check if the word has at least 3 characters
-        if string.len() >= 3 {
-            string.truncate(string.len() - 2);
-        }
-    }
-    return hwid;
-}
 
-fn get_boardname() -> String {
-    let cmd: Result<std::process::Output, std::io::Error> = std::process::Command::new("wmic")
-        .args(vec!["baseboard", "get", "product"])
-        .output();
-    let str = match cmd {
-        Ok(output) => String::from_utf8_lossy(&output.stdout)
-            .to_string()
-            .split("\n")
-            .map(|x| x.to_string())
-            .collect::<Vec<String>>()[1]
-            .clone(),
-
-        Err(e) => {
-            let error = &e;
-            println!("Error `{}`.", error);
-            return "Error".to_string();
-        }
-    };
-    str.trim().to_string()
-}
-
-fn remove_quotes(input: String) -> String {
-    input[1..(input.len() - 1)].to_string()
-}
-async fn download_relay(list: Vec<&str>) {
+async fn download_relay(list: Vec<String>) {
     let mut counter = 0;
     for i in list {
         if i != AUTO_INSTALL_INTEL_CHIPSET_PS1 {
             let path = "/oneclickdriverinstalltemp/drivers/".to_string()
                 + (&counter.to_string())
                 + &".exe";
-            let _ = download_files::download(i, &path).await;
+            let _ = download_files::download(&i, &path).await;
         } else {
-            let _ = download_files::download(i, "/oneclickdriverinstalltemp/zip/intel.zip").await;
+            let _ = download_files::download(&i, "/oneclickdriverinstalltemp/zip/intel.zip").await;
         }
         counter += 1;
     }
 }
 
-async fn setup_installation() {
+async fn setup_installation() -> Vec<String> {
     //creates temporary download directory
     let _ = fs::create_dir_all("/oneclickdriverinstalltemp/drivers");
     let _ = fs::create_dir("/oneclickdriverinstalltemp/database");
@@ -153,7 +97,7 @@ async fn setup_installation() {
     let _ = download_files::download(&DATABASE, DATABASE_FILE_PATH).await;
 
     //converts the .json file into a string
-    let boardname: String = get_boardname();
+    let boardname: String = helper::get_boardname();
     let mut file = File::open("/oneclickdriverinstalltemp/database/database.json").unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -178,19 +122,19 @@ async fn setup_installation() {
     //iterating through an array
     for _ in &objects {
         if objects[counter]["board_name"] == boardname {
-            chromebooks.cpu_codename = remove_quotes(objects[counter]["cpu_codename"].to_string());
+            chromebooks.cpu_codename = helper::remove_quotes(objects[counter]["cpu_codename"].to_string());
             chromebooks.avaliable_drivers =
-                remove_quotes(objects[counter]["avaliable_drivers"].to_string());
-            chromebooks.cpu_brand = remove_quotes(objects[counter]["cpu_brand"].to_string());
-            chromebooks.device_name = remove_quotes(objects[counter]["device_name"].to_string());
-            chromebooks.board_name = remove_quotes(objects[counter]["board_name"].to_string());
+            helper::remove_quotes(objects[counter]["avaliable_drivers"].to_string());
+            chromebooks.cpu_brand = helper::remove_quotes(objects[counter]["cpu_brand"].to_string());
+            chromebooks.device_name = helper::remove_quotes(objects[counter]["device_name"].to_string());
+            chromebooks.board_name = helper::remove_quotes(objects[counter]["board_name"].to_string());
             chromebooks.cpu_generation =
-                remove_quotes(objects[counter]["cpu_generation"].to_string());
+            helper::remove_quotes(objects[counter]["cpu_generation"].to_string());
         }
         counter += 1
     }
 
-    let hwid: Vec<String> = get_hwid(); //physical device hardware id (elan0001)
+    let hwid: Vec<String> = helper::get_hwid(); //physical device hardware id (elan0001)
     counter = 0;
 
     while counter < TOUCHSCREENHWID.len() {
@@ -479,12 +423,62 @@ async fn setup_installation() {
     }
 
     //downloading section
-    download_relay(download_vector).await;
+    return helper::to_vec_string(download_vector);
 }
-fn install()
+
+fn check_process(value1: &String) -> bool {
+    let system = System::new_all();
+
+    system
+        .processes()
+        .into_iter()
+        .find(|(_, process)| {
+            process.name() == value1
+        })
+        .is_some()
+}
+fn execute(program: &String)
 {
-    
+    let mut command = shell("C:\\oneclickdriverinstalltemp\\drivers\\".to_owned() + &program);
+    command.stdout(Stdio::piped());
+
+let output = command.execute_output().unwrap();
+
 }
+async fn install(length: u8)
+{
+    let mut index = 0;
+    let mut process_exists = false;
+    let mut process_status = 0;
+    let mut process = String::new();
+    while index < length {
+        process = index.to_string() + &".exe";
+        execute(&process);
+        index +=1;
+        process_status +=1;
+        if process_exists == false && process_status == 0 {
+            execute(&process);
+          } else if process_exists == true && process_status == 0 {
+            process_status+=1;
+          } else if process_exists == true && process_status == 1 {
+            if process_status < 2 || process_status == 1 {
+                process_status+=1;
+            }
+          } else if process_exists == false && process_status == 2 {
+            index+=1;
+            process_status = 0;
+          }
+          else if process_exists == false && process_status == 1 {
+            index+=1;
+            process_status = 0;
+          }
+          println!("{}", index);
+          println!("{}", process_exists);
+          println!("{}", process_status);
+          println!("{}", &process);
+        }
+
+    }
 fn close() {
     let cleanup = Confirm::new("Cleanup Downloaded Data?")
         .with_default(true)
@@ -513,7 +507,10 @@ async fn main() {
             let download_db = Confirm::new("To install your chromebook's drivers a database must be downloaded. Download Database?").with_default(true).prompt();
             match download_db {
                 Ok(true) => {
-                    let _ = setup_installation().await;
+                    let vector = setup_installation().await;
+                    download_relay(vector.clone()).await;
+                    install(vector.len() as u8).await;
+
                     //when complete add win32_notif crate
                     close();
                 }

@@ -1,5 +1,2 @@
 -use execute to auto-install intel chip-set drivers
--iterate through the JSON to identify chromebooks
--Find XE Graphics, and broadwell chipset drivers
--add AMD Driver support
 -create install sequence
