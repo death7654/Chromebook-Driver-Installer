@@ -65,7 +65,7 @@ const TOUCHSCREENHWID: [&str; 4] = [
 const AUTO_INSTALL_INTEL_CHIPSET_PS1: &str =
     "https://raw.githubusercontent.com/coolstar/driverinstallers/master/autoinstall-intel.zip";
 
-const CHRULTRABOOK_TOOLS: &str = "https://github.com/death7654/Chrultrabook-Tools/releases/download/3.0.1/chrultrabook-tools_3.0.1_x64_en-US.msi";
+const CHRULTRABOOK_TOOLS: &str = "https://github.com/death7654/Chrultrabook-Tools/releases/download/3.0.1/chrultrabook-tools_3.0.1_x64-setup.exe";
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 struct Chromebook {
@@ -417,6 +417,17 @@ async fn setup_installation() -> Vec<String> {
         download_vector.retain(|f| *f != EC);
         download_vector.push(WILCO_EC)
     }
+    match chrultrabook_tools {
+        Ok(true) => {
+            download_vector.push(CHRULTRABOOK_TOOLS);
+        }
+        Ok(false) => {}
+        Err(_) => {
+            println!("An Error has occured please try again");
+            exit(0)
+        }
+    }
+
     if chromebooks.avaliable_drivers.contains("cAVS")
         || chromebooks.avaliable_drivers.contains("cSOF")
         || chromebooks.avaliable_drivers.contains("sof")
@@ -433,16 +444,7 @@ async fn setup_installation() -> Vec<String> {
     .with_default(true)
     .prompt();
 
-    match chrultrabook_tools {
-        Ok(true) => {
-            download_vector.push(CHRULTRABOOK_TOOLS);
-        }
-        Ok(false) => {}
-        Err(_) => {
-            println!("An Error has occured please try again");
-            exit(0)
-        }
-    }
+    
 
 
     //downloading section
