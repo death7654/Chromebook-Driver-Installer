@@ -1,5 +1,3 @@
-
-
 pub fn to_vec_string(input: Vec<&str>) -> Vec<String> {
     let strings: Vec<String> = input.iter().map(|&s| s.into()).collect();
     return strings;
@@ -61,8 +59,7 @@ pub fn get_hwid() -> Vec<String> {
     }
     return hwid;
 }
-pub fn run_chipset_ps1()
-{
+pub fn run_chipset_ps1() {
     let _: Result<std::process::Output, std::io::Error> =
         std::process::Command::new("powershell.exe")
             .args(vec![

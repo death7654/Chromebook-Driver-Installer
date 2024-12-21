@@ -27,7 +27,8 @@ const TOUCHPAD: &str = "https://github.com/coolstar/driverinstallers/raw/master/
 const TOUCHSCREEN: &str = "https://github.com/coolstar/driverinstallers/raw/master/crostouchscreen/crostouchscreen.2.9.5-installer.exe";
 const EC: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.6-installer.exe";
-const WILCO_EC: &str = "https://github.com/coolstar/driverinstallers/raw/master/wilcoec/wilcoec.1.0.2-installer.exe";
+const WILCO_EC: &str =
+    "https://github.com/coolstar/driverinstallers/raw/master/wilcoec/wilcoec.1.0.2-installer.exe";
 const CR50: &str =
     "https://github.com/coolstar/driverinstallers/raw/master/cr50/cr50.1.0.1-installer.exe";
 
@@ -74,7 +75,6 @@ struct Chromebook {
     board_name: String,
     touchscreen: bool,
 }
-
 
 async fn download_relay(list: Vec<String>) {
     let mut counter = 0;
@@ -125,14 +125,18 @@ async fn setup_installation() -> Vec<String> {
     //iterating through an array
     for _ in &objects {
         if objects[counter]["board_name"] == boardname {
-            chromebooks.cpu_codename = helper::remove_quotes(objects[counter]["cpu_codename"].to_string());
+            chromebooks.cpu_codename =
+                helper::remove_quotes(objects[counter]["cpu_codename"].to_string());
             chromebooks.avaliable_drivers =
-            helper::remove_quotes(objects[counter]["avaliable_drivers"].to_string());
-            chromebooks.cpu_brand = helper::remove_quotes(objects[counter]["cpu_brand"].to_string());
-            chromebooks.device_name = helper::remove_quotes(objects[counter]["device_name"].to_string());
-            chromebooks.board_name = helper::remove_quotes(objects[counter]["board_name"].to_string());
+                helper::remove_quotes(objects[counter]["avaliable_drivers"].to_string());
+            chromebooks.cpu_brand =
+                helper::remove_quotes(objects[counter]["cpu_brand"].to_string());
+            chromebooks.device_name =
+                helper::remove_quotes(objects[counter]["device_name"].to_string());
+            chromebooks.board_name =
+                helper::remove_quotes(objects[counter]["board_name"].to_string());
             chromebooks.cpu_generation =
-            helper::remove_quotes(objects[counter]["cpu_generation"].to_string());
+                helper::remove_quotes(objects[counter]["cpu_generation"].to_string());
         }
         counter += 1
     }
@@ -393,8 +397,7 @@ async fn setup_installation() -> Vec<String> {
             }
         }
     }
-    if chromebooks.board_name == "Drallion"
-    {
+    if chromebooks.board_name == "Drallion" {
         let audio = Confirm::new("Download the audio driver?")
             .with_default(true)
             .prompt();
@@ -429,17 +432,15 @@ async fn setup_installation() -> Vec<String> {
     return helper::to_vec_string(download_vector);
 }
 
-
 fn start_and_wait(program: &str) -> std::io::Result<ExitStatus> {
     let mut child = Command::new(program).spawn()?;
     child.wait()
-} 
-async fn install(length: u8)
-{
+}
+async fn install(length: u8) {
     let mut programs = Vec::new();
-    for i in 0..length
-    {
-        programs.push("C:\\oneclickdriverinstalltemp\\drivers\\".to_owned() +&i.to_string()+".exe");
+    for i in 0..length {
+        programs
+            .push("C:\\oneclickdriverinstalltemp\\drivers\\".to_owned() + &i.to_string() + ".exe");
     }
 
     for program in &programs {
@@ -451,13 +452,11 @@ async fn install(length: u8)
         }
         sleep(Duration::from_secs(2)); // Delay between starting programs
     }
-    if Path::new("C:\\oneclickdriverinstalltemp\\zip").exists() == true
-    {
+    if Path::new("C:\\oneclickdriverinstalltemp\\zip").exists() == true {
         let target = PathBuf::from("C:\\oneclickdriverinstalltemp\\zip");
         let archive = PathBuf::from("C:\\oneclickdriverinstalltemp\\zip\\autoinstall-intel.zip");
         zip_extract(&archive, &target).unwrap();
         helper::run_chipset_ps1();
-
     }
 }
 fn close() {
@@ -490,16 +489,21 @@ async fn main() {
                 Ok(true) => {
                     let vector = setup_installation().await;
                     download_relay(vector.clone()).await;
-                    let install = Confirm::new("Start Installation?").with_default(true).prompt();
-                    match install {
+                    let start_install = Confirm::new("Start Installation?")
+                        .with_default(true)
+                        .prompt();
+                    match start_install {
                         Ok(true) => {
                             install(vector.len() as u8).await;
                             println!("All Drivers have been installed.");
-                        },
-                        Ok(false) => {println!("User has denied the installation of drivers")},
-                        Err(_) => {println!("An error has occured please try again.")}
+                        }
+                        Ok(false) => {
+                            println!("User has denied the installation of drivers")
+                        }
+                        Err(_) => {
+                            println!("An error has occured please try again.")
+                        }
                     }
-                    
                     close();
                 }
                 Ok(false) => {
