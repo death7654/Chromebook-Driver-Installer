@@ -417,7 +417,10 @@ async fn setup_installation() -> Vec<String> {
         download_vector.retain(|f| *f != EC);
         download_vector.push(WILCO_EC)
     }
-    match chrultrabook_tools {
+    let tools = Confirm::new("Download Chrultrabook Tools?")
+    .with_default(true)
+    .prompt();
+    match tools {
         Ok(true) => {
             download_vector.push(CHRULTRABOOK_TOOLS);
         }
@@ -440,9 +443,7 @@ async fn setup_installation() -> Vec<String> {
             driver_purchase
         );
     }
-    let chrultrabook_tools = Confirm::new("Download Chrultrabook Tools?")
-    .with_default(true)
-    .prompt();
+   
 
     
 
