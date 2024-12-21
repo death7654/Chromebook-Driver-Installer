@@ -10,6 +10,7 @@ use std::process::{Command, Stdio};
 use std::vec;
 use std::{fs, process::exit};
 use terminal_link::Link;
+use zip_extract;
 
 const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
@@ -126,6 +127,20 @@ fn get_boardname() -> String {
 fn remove_quotes(input: String) -> String {
     input[1..(input.len() - 1)].to_string()
 }
+async fn download_relay(list: Vec<&str>) {
+    let mut counter = 0;
+    for i in list {
+        if i != AUTO_INSTALL_INTEL_CHIPSET_PS1 {
+            let path = "/oneclickdriverinstalltemp/drivers/".to_string()
+                + (&counter.to_string())
+                + &".exe";
+            let _ = download_files::download(i, &path).await;
+        } else {
+            let _ = download_files::download(i, "/oneclickdriverinstalltemp/zip/intel.zip").await;
+        }
+        counter += 1;
+    }
+}
 
 async fn setup_installation() {
     //creates temporary download directory
@@ -176,7 +191,7 @@ async fn setup_installation() {
     let hwid: Vec<String> = get_hwid(); //physical device hardware id (elan0001)
     counter = 0;
 
-    while counter <= TOUCHSCREENHWID.len() {
+    while counter < TOUCHSCREENHWID.len() {
         if hwid.contains(&TOUCHSCREENHWID[counter].to_string()) {
             chromebooks.touchscreen = true;
             break;
@@ -265,7 +280,7 @@ async fn setup_installation() {
     }
     let mut max989090 = false;
     counter = 0;
-    while counter <= MAX989090HWID.len() {
+    while counter < MAX989090HWID.len() {
         if hwid.contains(&MAX989090HWID[counter].to_string()) {
             max989090 = true;
             break;
@@ -409,14 +424,33 @@ async fn setup_installation() {
         let graphics = Link::new("Rapid Storage download link", COMETLAKE_RAPID_STORAGE);
         println!("Due to Legal Constraints, Please download the Rapid Storage and move it to C:/oneclickdriverinstalltemp \n\n{}", graphics);
     }
+    if chromebooks.avaliable_drivers.contains("AlderLakeChipset")
+        || chromebooks.avaliable_drivers.contains("TigerLakeChipset")
+        || chromebooks.avaliable_drivers.contains("jasperlakechipset")
+    {
+        let chipset = Confirm::new("Download the Intel chipset driver?")
+            .with_default(true)
+            .prompt();
 
+        match chipset {
+            Ok(true) => {
+                download_vector.push(AUTO_INSTALL_INTEL_CHIPSET_PS1);
+                let _ = fs::create_dir_all("/oneclickdriverinstalltemp/zip");
+            }
+            Ok(false) => {}
+            Err(_) => {
+                println!("An Error has occured please try again");
+                exit(0)
+            }
+        }
+    }
     if chromebooks.avaliable_drivers.contains("cAVS")
         || chromebooks.avaliable_drivers.contains("cSOF")
         || chromebooks.avaliable_drivers.contains("sof")
         || chromebooks.avaliable_drivers.contains("Thunderbolt-4")
         || chromebooks.avaliable_drivers.contains("sof-amd")
     {
-        let driver_purchase = Link::new("ax211 wifi download link", PURCHASE);
+        let driver_purchase = Link::new("Store link", PURCHASE);
         println!(
             "Your chromebook has audio or thunderbolt drivers avaliable to be purchased. \n\n{}",
             driver_purchase
@@ -424,8 +458,8 @@ async fn setup_installation() {
     }
 
     //downloading section
+    download_relay(download_vector).await;
 }
-
 fn close() {
     let cleanup = Confirm::new("Cleanup Downloaded Data?")
         .with_default(true)
