@@ -5,18 +5,17 @@ use inquire::{self, Confirm};
 use serde_json::Value;
 use std::fs::File;
 use std::io::Read;
-use std::process::{Command, Stdio};
+use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::vec;
 use std::{fs, process::exit};
 use terminal_link::Link;
-use sysinfo::{System, SystemExt, ProcessExt};
-use execute::{Execute, shell};
 
-use zip_extract;
-
-use std::process::{ExitStatus};
+use std::process::ExitStatus;
 use std::thread::sleep;
 use std::time::Duration;
+
+use zip_extensions::*;
 
 const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
@@ -442,7 +441,6 @@ async fn install(length: u8)
     {
         programs.push("C:\\oneclickdriverinstalltemp\\drivers\\".to_owned() +&i.to_string()+".exe");
     }
-    println!("{:#?}", programs);
 
     for program in &programs {
         println!("Starting: {}", program);
@@ -452,6 +450,14 @@ async fn install(length: u8)
             Err(e) => eprintln!("Failed to start {}: {}", program, e),
         }
         sleep(Duration::from_secs(2)); // Delay between starting programs
+    }
+    if Path::new("C:\\oneclickdriverinstalltemp\\zip").exists() == true
+    {
+        let target = PathBuf::from("C:\\oneclickdriverinstalltemp\\zip");
+        let archive = PathBuf::from("C:\\oneclickdriverinstalltemp\\zip\\autoinstall-intel.zip");
+        zip_extract(&archive, &target).unwrap();
+        helper::run_chipset_ps1();
+
     }
 }
 fn close() {
@@ -484,9 +490,16 @@ async fn main() {
                 Ok(true) => {
                     let vector = setup_installation().await;
                     download_relay(vector.clone()).await;
-                    install(vector.len() as u8).await;
-
-                    //when complete add win32_notif crate
+                    let install = Confirm::new("Start Installation?").with_default(true).prompt();
+                    match install {
+                        Ok(true) => {
+                            install(vector.len() as u8).await;
+                            println!("All Drivers have been installed.");
+                        },
+                        Ok(false) => {println!("User has denied the installation of drivers")},
+                        Err(_) => {println!("An error has occured please try again.")}
+                    }
+                    
                     close();
                 }
                 Ok(false) => {

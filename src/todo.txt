@@ -1,2 +1,0 @@
--use execute to auto-install intel chip-set drivers
--create install sequence

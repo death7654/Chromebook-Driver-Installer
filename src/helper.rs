@@ -1,4 +1,3 @@
-use std::process::{Command};
 
 
 pub fn to_vec_string(input: Vec<&str>) -> Vec<String> {
@@ -61,4 +60,16 @@ pub fn get_hwid() -> Vec<String> {
         }
     }
     return hwid;
+}
+pub fn run_chipset_ps1()
+{
+    let _: Result<std::process::Output, std::io::Error> =
+        std::process::Command::new("powershell.exe")
+            .args(vec![
+                "-ExecutionPolicy",
+                "bypass",
+                "-file",
+                "C:\\oneclickdriverinstalltemp\\zip\\autoinstall-intel.ps1",
+            ])
+            .output();
 }

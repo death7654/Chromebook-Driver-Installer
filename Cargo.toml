@@ -17,6 +17,7 @@ execute = "0.2.13"
 serde = { version = "1.0.210", features = ["derive"] }
 zip-extract = "0.2.1"
 sysinfo = "0.29.10"
+zip-extensions = "0.8.1"
 
 
 
