@@ -7,7 +7,6 @@ use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::Client;
 
 pub async fn download(url: &str, path: &str) -> Result<(), String> {
-    println!("path: {path}");
     // Reqwest setup
     let url_copy = &url;
     let client = Client::new();
@@ -23,7 +22,7 @@ pub async fn download(url: &str, path: &str) -> Result<(), String> {
     // Indicatif setup
     let pb = ProgressBar::new(total_size);
     pb.set_style(ProgressStyle::default_bar()
-        .template("{msg}\n{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
+        .template("{msg}\n{spinner:.green} [{elapsed_precise}] [{wide_bar:.green/cyan}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
         .progress_chars("#>-"));
     pb.set_message(&format!("Downloading {}", url_copy));
 
@@ -41,6 +40,6 @@ pub async fn download(url: &str, path: &str) -> Result<(), String> {
         pb.set_position(new);
     }
 
-    pb.finish_with_message(&format!("Downloaded {} to {}", url_copy, path));
+    pb.finish_with_message(&format!("\nDownloaded {} to {}", url_copy, path));
     return Ok(());
 }

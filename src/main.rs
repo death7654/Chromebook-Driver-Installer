@@ -444,7 +444,7 @@ async fn install(length: u8) {
     }
 
     for program in &programs {
-        println!("Starting: {}", program);
+        println!("\nStarting: {}", program);
         let status = start_and_wait(program);
         match status {
             Ok(exit) => println!("{} exited with status: {:?}", program, exit),
@@ -495,13 +495,13 @@ async fn main() {
                     match start_install {
                         Ok(true) => {
                             install(vector.len() as u8).await;
-                            println!("All Drivers have been installed.");
+                            println!("\nAll Drivers have been installed.");
                         }
                         Ok(false) => {
-                            println!("User has denied the installation of drivers")
+                            println!("\nUser has denied the installation of drivers")
                         }
                         Err(_) => {
-                            println!("An error has occured please try again.")
+                            println!("\nAn error has occured please try again.")
                         }
                     }
                     close();
