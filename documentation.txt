@@ -1,0 +1,6 @@
+build.rs forces the app to start as an admin as well as giving it an icon
+
+to build the app use 
+
+cargo build --release --target=x86_64-pc-windows-msvc
+
