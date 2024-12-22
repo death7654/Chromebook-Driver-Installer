@@ -1,5 +1,6 @@
 [package]
 name = "One_Click_Driver_Installer"
+build = "build.rs"
 version = "3.0.0"
 edition = "2021"
 
@@ -15,6 +16,10 @@ terminal-link = "0.1.0"
 serde_json = "1.0.133"
 serde = { version = "1.0.210", features = ["derive"] }
 zip-extensions = "0.8.1"
+
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1.12"
 
 [profile.release]
 opt-level = 3
