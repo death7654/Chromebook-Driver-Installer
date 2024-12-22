@@ -23,3 +23,5 @@ winres = "0.1.12"
 
 [profile.release]
 opt-level = 3
+panic = "abort"
+strip = "symbols"
