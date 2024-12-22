@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "One_Click_Driver_Installer"
-version = "3.0.0"
+version = "3.1.1"
 dependencies = [
  "exitfailure",
  "failure",
