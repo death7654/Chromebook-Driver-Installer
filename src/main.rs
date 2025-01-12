@@ -20,6 +20,8 @@ use zip_extensions::*;
 
 const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
+
+const LINKS: &str = "https://github.com/death7654/Driver-Installer-Links/releases/latest/download/links.json"
 const DATABASE_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/database.json";
 
 const VCREDIST: &str = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
