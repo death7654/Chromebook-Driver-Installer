@@ -21,42 +21,11 @@ use zip_extensions::*;
 const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
 
-const LINKS: &str = "https://github.com/death7654/Driver-Installer-Links/releases/latest/download/links.json"
+const LINKS: &str = "https://github.com/death7654/Driver-Installer-Links/releases/latest/download/links.json";
 const DATABASE_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/database.json";
 
-const VCREDIST: &str = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
+const LINKS_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/links.json";
 
-const TOUCHPAD: &str = "https://github.com/coolstar/driverinstallers/raw/master/crostouchpad/crostouchpad.4.1.6-installer.exe";
-const TOUCHSCREEN: &str = "https://github.com/coolstar/driverinstallers/raw/master/crostouchscreen/crostouchscreen.2.9.5-installer.exe";
-const EC: &str =
-    "https://github.com/coolstar/driverinstallers/raw/master/crosec/crosec.2.0.6-installer.exe";
-const WILCO_EC: &str =
-    "https://github.com/coolstar/driverinstallers/raw/master/wilcoec/wilcoec.1.0.2-installer.exe";
-const CR50: &str =
-    "https://github.com/coolstar/driverinstallers/raw/master/cr50/cr50.1.0.1-installer.exe";
-
-const MAXIM989090: &str =
-    "https://github.com/coolstar/driverinstallers/raw/master/max98090/max98090.1.0.4-installer.exe";
-const RYZEN3000AUDIO: &str = "https://github.com/coolstar/driverinstallers/raw/master/csaudioacp3x/csaudioacp3x.1.0.4-installer.exe";
-const DRALLION_AUDIO: &str = "https://dl.dell.com/FOLDER08469300M/2/Realtek-High-Definition-Audio-Driver_266V7_WIN_6.0.9341.1_A13.EXE";
-
-const LINKI2C: &str =
-    "https://github.com/coolstar/driverinstallers/raw/master/gmbusi2c/gmbusi2c.1.0-installer.exe";
-const ALC5645: &str = "https://coolstar.org/chromebook/downloads/drivers/alc5645%20audio.exe";
-const R11: &str = "https://github.com/coolstar/driverinstallers/raw/master/max98090-r11/max98090-r11.1.0.0-installer.exe";
-
-const CREATIVE_AUDIO: &str =
-    "https://www.dell.com/support/home/en-in/drivers/DriversDetails?driverId=4t7p8";
-const AX211: &str = "https://www.intel.com/content/www/us/en/download/19351/intel-wireless-wi-fi-drivers-for-windows-10-and-windows-11.html";
-const BROADWELL_RAPID_STORAGE: &str = "https://downloadcenter.intel.com/download/25910/Intel-Rapid-Storage-Technology-for-Intel-NUC?product=87570";
-const COMETLAKE_RAPID_STORAGE: &str = "https://www.intel.com/content/www/us/en/download/19512/intel-rapid-storage-technology-driver-installation-software-with-intel-optane-memory-10th-and-11th-gen-platforms.html";
-const XE_GRAPHICS: &str = "https://www.intel.com/content/www/us/en/download/785597/intel-arc-iris-xe-graphics-windows.html?wapkw=xe-graphics";
-const JASPERLAKE_GRAPHICS: &str = "https://www.intel.com/content/www/us/en/download/776137/intel-7th-10th-gen-processor-graphics-windows.html?wapkw=intel%20hd";
-const AMD_CHIPSET: &str = "https://www.amd.com/en/support/downloads/drivers.html/chipsets/laptop-chipsets/amd-ryzen-and-athlon-mobile-chipset.html";
-const AMD_GRAPHICS: &str = "https://www.amd.com/en/support/download/drivers.html";
-
-const PURCHASE: &str = "https://coolstar.org/chromebook/driverlicense/login.html";
-//hwid ids
 const MAX989090HWID: [&str; 2] = ["ACPI\\VEN_193C&DEV_9890&REV_0002", "ACPI\\193C9890"];
 const TOUCHSCREENHWID: [&str; 4] = [
     "ACPI\\ATML0001",
@@ -64,11 +33,6 @@ const TOUCHSCREENHWID: [&str; 4] = [
     "ACPI\\RAYD0001",
     "ACPI\\ELAN0001",
 ];
-
-const AUTO_INSTALL_INTEL_CHIPSET_PS1: &str =
-    "https://raw.githubusercontent.com/coolstar/driverinstallers/master/autoinstall-intel.zip";
-
-const CHRULTRABOOK_TOOLS: &str = "https://github.com/death7654/Chrultrabook-Tools/releases/download/3.0.1/chrultrabook-tools_3.0.1_x64-setup.exe";
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 struct Chromebook {
@@ -80,11 +44,38 @@ struct Chromebook {
     board_name: String,
     touchscreen: bool,
 }
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
+struct Links {
+    vcredist: String,
+    touchpad: String,
+    touchscreen: String,
+    ec: String,
+    wilco_ec: String,
+    cr50: String,
+    maxim989090: String,
+    ryzen3000audio: String,
+    i2c_link: String,
+    alc5645: String,
+    cyan_audio: String,
+    creative_audio: String,
+    r11_audio: String,
+    drallion_audio: String,
+    ax211_wifi: String,
+    broadwell_rapid_storage: String,
+    cometlake_rapid_storage:String,
+    xe_graphics: String,
+    jasperlake_chipset: String,
+    amd_chipset:String,
+    amd_graphics: String,
+    intel_chipset: String,
+    chrultrabook_tools: String,
+    purchase_driver_portal: String,
+}
 
 async fn download_relay(list: Vec<String>) {
     let mut counter = 0;
     for i in list {
-        if i != AUTO_INSTALL_INTEL_CHIPSET_PS1 {
+        if i != "https://raw.githubusercontent.com/coolstar/driverinstallers/master/autoinstall-intel.zip" {
             let path = "/oneclickdriverinstalltemp/drivers/".to_string()
                 + (&counter.to_string())
                 + &".exe";
@@ -103,15 +94,18 @@ async fn setup_installation() -> Vec<String> {
 
     //downloads database
     let _ = download_files::download(&DATABASE, DATABASE_FILE_PATH).await;
+    let _ = download_files::download(&LINKS, LINKS_FILE_PATH).await;
+
+    //gets boardname
+    let boardname: String = helper::get_boardname();
 
     //converts the .json file into a string
-    let boardname: String = helper::get_boardname();
     let mut file = File::open("/oneclickdriverinstalltemp/database/database.json").unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
     //converts the string into json objects
-    let v: Value = serde_json::from_str(&mut contents).unwrap();
+    let mut v: Value = serde_json::from_str(&mut contents).unwrap();
 
     //empty object to store future detected values
     let mut chromebooks = Chromebook {
@@ -124,7 +118,7 @@ async fn setup_installation() -> Vec<String> {
         touchscreen: false,
     };
     //converts json objects into an array so it can be iterated upon
-    let objects = v.as_array().unwrap().clone();
+    let mut objects = v.as_array().unwrap().clone();
     let mut counter = 0;
 
     //iterating through an array
@@ -145,6 +139,67 @@ async fn setup_installation() -> Vec<String> {
         }
         counter += 1
     }
+
+    file = File::open("/oneclickdriverinstalltemp/database/links.json").unwrap();
+    contents = String::new();
+    file.read_to_string(&mut contents).unwrap();
+
+    v = serde_json::from_str(&mut contents).unwrap();
+
+    let mut link = Links
+    {
+        vcredist: String::from(""),
+        touchpad: String::from(""),
+        touchscreen: String::from(""),
+        ec: String::from(""),
+        wilco_ec: String::from(""),
+        cr50: String::from(""),
+        maxim989090: String::from(""),
+        ryzen3000audio: String::from(""),
+        i2c_link: String::from(""),
+        alc5645: String::from(""),
+        cyan_audio: String::from(""),
+        creative_audio: String::from(""),
+        r11_audio: String::from(""),
+        drallion_audio: String::from(""),
+        ax211_wifi: String::from(""),
+        broadwell_rapid_storage: String::from(""),
+        cometlake_rapid_storage: String::from(""),
+        xe_graphics: String::from(""),
+        jasperlake_chipset: String::from(""),
+        amd_chipset: String::from(""),
+        amd_graphics: String::from(""),
+        intel_chipset: String::from(""),
+        chrultrabook_tools: String::from(""),
+        purchase_driver_portal: String::from("")
+    };
+    objects = v.as_array().unwrap().clone();
+
+    link.vcredist = helper::remove_quotes(objects[0]["vcredist"].to_string());
+    link.touchpad = helper::remove_quotes(objects[0]["touchpad"].to_string());
+    link.touchscreen = helper::remove_quotes(objects[0]["touchscreen"].to_string());
+    link.ec = helper::remove_quotes(objects[0]["EC"].to_string());
+    link.wilco_ec = helper::remove_quotes(objects[0]["Wilco_EC"].to_string());
+    link.cr50 = helper::remove_quotes(objects[0]["CR50"].to_string());
+    link.maxim989090 = helper::remove_quotes(objects[0]["Maxim989090"].to_string());
+    link.ryzen3000audio = helper::remove_quotes(objects[0]["Ryzen3000Audio"].to_string());
+    link.i2c_link = helper::remove_quotes(objects[0]["I2C_Link"].to_string());
+    link.alc5645 = helper::remove_quotes(objects[0]["ALC5645"].to_string());
+    link.cyan_audio = helper::remove_quotes(objects[0]["Cyan_Audio"].to_string());
+    link.creative_audio = helper::remove_quotes(objects[0]["Creative_Audio"].to_string());
+    link.r11_audio = helper::remove_quotes(objects[0]["R11_Audio"].to_string());
+    link.drallion_audio = helper::remove_quotes(objects[0]["Drallion_Audio"].to_string());
+    link.ax211_wifi =helper::remove_quotes( objects[0]["AX211_Wifi"].to_string());
+    link.broadwell_rapid_storage =helper::remove_quotes( objects[0]["Broadwell_Rapid_Storage"].to_string());
+    link.cometlake_rapid_storage = helper::remove_quotes(objects[0]["Cometlake_Rapid_Storage"].to_string());
+    link.xe_graphics = helper::remove_quotes(objects[0]["XE_Graphics"].to_string());
+    link.jasperlake_chipset = helper::remove_quotes(objects[0]["Jasperlake_Chipset"].to_string());
+    link.amd_chipset = helper::remove_quotes(objects[0]["AMD_Chipset"].to_string());
+    link.amd_graphics = helper::remove_quotes(objects[0]["AMD_Graphics"].to_string());
+    link.intel_chipset = helper::remove_quotes(objects[0]["Intel_Chipset_PS1"].to_string());
+    link.chrultrabook_tools = helper::remove_quotes(objects[0]["Chrultrabook_Tools"].to_string());
+    link.purchase_driver_portal = helper::remove_quotes(objects[0]["Purchase_Driver_Portal"].to_string());
+
 
     let hwid: Vec<String> = helper::get_hwid(); //physical device hardware id (elan0001)
     counter = 0;
@@ -186,7 +241,7 @@ async fn setup_installation() -> Vec<String> {
         .with_default(true)
         .prompt();
     match vcredist {
-        Ok(true) => download_vector.push(VCREDIST),
+        Ok(true) => download_vector.push(&link.vcredist as &str),
         Ok(false) => {
             println!("Make sure VCREDIST is installed or in C:\\oneclickdriverinstalltemp before you install other drivers")
         }
@@ -199,7 +254,7 @@ async fn setup_installation() -> Vec<String> {
         .with_default(true)
         .prompt();
     match touchpad {
-        Ok(true) => download_vector.push(TOUCHPAD),
+        Ok(true) => download_vector.push(&link.touchpad as &str),
         Ok(false) => {
             println!("")
         }
@@ -212,7 +267,7 @@ async fn setup_installation() -> Vec<String> {
         .with_default(true)
         .prompt();
     match ec {
-        Ok(true) => download_vector.push(EC),
+        Ok(true) => download_vector.push(&link.ec as &str),
         Ok(false) => {
             println!("")
         }
@@ -228,7 +283,7 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match touchscreen {
-            Ok(true) => download_vector.push(TOUCHSCREEN),
+            Ok(true) => download_vector.push(&link.touchscreen),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
@@ -253,7 +308,7 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match max {
-            Ok(true) => download_vector.push(MAXIM989090),
+            Ok(true) => download_vector.push(&link.maxim989090),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
@@ -268,14 +323,14 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match i2c {
-            Ok(true) => download_vector.push(LINKI2C),
+            Ok(true) => download_vector.push(&link.i2c_link),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
                 exit(0)
             }
         }
-        let creative_audio = Link::new("Creative Audio Driver download link", CREATIVE_AUDIO);
+        let creative_audio = Link::new("Creative Audio Driver download link", &link.creative_audio);
         println!("Due to Legal Constraints, Please download the Creative Audio Driver and move it to C:/oneclickdriverinstalltemp \n\n{}", creative_audio);
     }
 
@@ -285,7 +340,7 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match alc5645 {
-            Ok(true) => download_vector.push(ALC5645),
+            Ok(true) => download_vector.push(&link.alc5645),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
@@ -300,7 +355,7 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match r11 {
-            Ok(true) => download_vector.push(R11),
+            Ok(true) => download_vector.push(&link.r11_audio),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
@@ -315,16 +370,16 @@ async fn setup_installation() -> Vec<String> {
     {
         let broadwell_rapid_storage = Link::new(
             "Rapid Storage driver download link",
-            BROADWELL_RAPID_STORAGE,
+            &link.broadwell_rapid_storage,
         );
         println!("Due to Legal Constraints, Please download the Rapid Storage driver and move it to C:/oneclickdriverinstalltemp. Although not necessary, Intel's version is specialized and provides better battery life. \n\n{}", broadwell_rapid_storage);
     }
     if chromebooks.avaliable_drivers.contains("AX211-Wifi") {
-        let ax211_wifi = Link::new("ax211 wifi download link", AX211);
+        let ax211_wifi = Link::new("ax211 wifi download link", &link.ax211_wifi);
         println!("Due to Legal Constraints, Please download the Intel Wifi driver and move it to C:/oneclickdriverinstalltemp \n\n{}", ax211_wifi);
     }
     if chromebooks.avaliable_drivers.contains("XE-Graphics") {
-        let xe = Link::new("graphics driver download link", XE_GRAPHICS);
+        let xe = Link::new("graphics driver download link", &link.xe_graphics);
         println!("Due to Legal Constraints, Please download the graphics driver and move it to C:/oneclickdriverinstalltemp \n\n{}", xe);
     }
     if chromebooks.avaliable_drivers.contains("CezanneChipset")
@@ -333,18 +388,18 @@ async fn setup_installation() -> Vec<String> {
             .avaliable_drivers
             .contains("picasso/dalichipset")
     {
-        let amd = Link::new("AMD Chipset Drivers download link", AMD_CHIPSET);
+        let amd = Link::new("AMD Chipset Drivers download link", &link.amd_chipset);
         println!("Due to Legal Constraints, Please download the AMD Chipset Drivers and move it to C:/oneclickdriverinstalltemp \n\n{}", amd);
     }
     if chromebooks.avaliable_drivers.contains("Radeon-Graphics")
         || chromebooks.avaliable_drivers.contains("Radeon-GPU")
         || chromebooks.avaliable_drivers.contains("vegagpu")
     {
-        let graphics = Link::new("Amd Graphics Driver download link", AMD_GRAPHICS);
+        let graphics = Link::new("Amd Graphics Driver download link", &link.amd_chipset);
         println!("Due to Legal Constraints, Please download the AMD Graphics Drivers and move it to C:/oneclickdriverinstalltemp \n\n{}", graphics);
     }
     if chromebooks.avaliable_drivers.contains("hd-graphics") {
-        let graphics = Link::new("Graphics Driver download link", JASPERLAKE_GRAPHICS);
+        let graphics = Link::new("Graphics Driver download link", &link.jasperlake_chipset);
         println!("Due to Legal Constraints, Please download the Graphics Drivers and move it to C:/oneclickdriverinstalltemp \n\n{}", graphics);
     }
     if chromebooks.avaliable_drivers.contains("CR50") {
@@ -353,7 +408,7 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match cr50 {
-            Ok(true) => download_vector.push(CR50),
+            Ok(true) => download_vector.push(&link.cr50),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
@@ -367,7 +422,7 @@ async fn setup_installation() -> Vec<String> {
             .prompt();
 
         match ryzen3000 {
-            Ok(true) => download_vector.push(RYZEN3000AUDIO),
+            Ok(true) => download_vector.push(&link.ryzen3000audio),
             Ok(false) => {}
             Err(_) => {
                 println!("An Error has occured please try again");
@@ -379,7 +434,7 @@ async fn setup_installation() -> Vec<String> {
         .avaliable_drivers
         .contains("rapid-storage-cometlake")
     {
-        let graphics = Link::new("Rapid Storage download link", COMETLAKE_RAPID_STORAGE);
+        let graphics = Link::new("Rapid Storage download link", &link.cometlake_rapid_storage);
         println!("Due to Legal Constraints, Please download the Rapid Storage and move it to C:/oneclickdriverinstalltemp \n\n{}", graphics);
     }
     if chromebooks.avaliable_drivers.contains("AlderLakeChipset")
@@ -392,7 +447,7 @@ async fn setup_installation() -> Vec<String> {
 
         match chipset {
             Ok(true) => {
-                download_vector.push(AUTO_INSTALL_INTEL_CHIPSET_PS1);
+                download_vector.push(&link.intel_chipset);
                 let _ = fs::create_dir_all("/oneclickdriverinstalltemp/zip");
             }
             Ok(false) => {}
@@ -409,7 +464,7 @@ async fn setup_installation() -> Vec<String> {
 
         match audio {
             Ok(true) => {
-                download_vector.push(DRALLION_AUDIO);
+                download_vector.push(&link.drallion_audio);
             }
             Ok(false) => {}
             Err(_) => {
@@ -417,15 +472,15 @@ async fn setup_installation() -> Vec<String> {
                 exit(0)
             }
         }
-        download_vector.retain(|f| *f != EC);
-        download_vector.push(WILCO_EC)
+        download_vector.retain(|f| *f != &link.ec);
+        download_vector.push(&link.wilco_ec)
     }
     let tools = Confirm::new("Download Chrultrabook Tools?")
     .with_default(true)
     .prompt();
     match tools {
         Ok(true) => {
-            download_vector.push(CHRULTRABOOK_TOOLS);
+            download_vector.push(&link.chrultrabook_tools);
         }
         Ok(false) => {}
         Err(_) => {
@@ -440,7 +495,7 @@ async fn setup_installation() -> Vec<String> {
         || chromebooks.avaliable_drivers.contains("Thunderbolt-4")
         || chromebooks.avaliable_drivers.contains("sof-amd")
     {
-        let driver_purchase = Link::new("Store link", PURCHASE);
+        let driver_purchase = Link::new("Store link", &link.purchase_driver_portal);
         println!(
             "Your chromebook has audio or thunderbolt drivers avaliable to be purchased. \n\n{}",
             driver_purchase
@@ -511,6 +566,7 @@ async fn main() {
             match download_db {
                 Ok(true) => {
                     let vector = setup_installation().await;
+                    println!("{:?}", vector);
                     download_relay(vector.clone()).await;
                     let start_install = Confirm::new("Start Installation?")
                         .with_default(true)
