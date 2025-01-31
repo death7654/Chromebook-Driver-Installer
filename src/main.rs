@@ -15,13 +15,13 @@ use std::process::ExitStatus;
 use std::thread::sleep;
 use std::time::Duration;
 
-
 use zip_extensions::*;
 
 const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
 
-const LINKS: &str = "https://github.com/death7654/Driver-Installer-Links/releases/latest/download/links.json";
+const LINKS: &str =
+    "https://github.com/death7654/Driver-Installer-Links/releases/latest/download/links.json";
 const DATABASE_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/database.json";
 
 const LINKS_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/links.json";
@@ -62,10 +62,10 @@ struct Links {
     drallion_audio: String,
     ax211_wifi: String,
     broadwell_rapid_storage: String,
-    cometlake_rapid_storage:String,
+    cometlake_rapid_storage: String,
     xe_graphics: String,
     jasperlake_chipset: String,
-    amd_chipset:String,
+    amd_chipset: String,
     amd_graphics: String,
     intel_chipset: String,
     chrultrabook_tools: String,
@@ -146,8 +146,7 @@ async fn setup_installation() -> Vec<String> {
 
     v = serde_json::from_str(&mut contents).unwrap();
 
-    let mut link = Links
-    {
+    let mut link = Links {
         vcredist: String::from(""),
         touchpad: String::from(""),
         touchscreen: String::from(""),
@@ -171,7 +170,7 @@ async fn setup_installation() -> Vec<String> {
         amd_graphics: String::from(""),
         intel_chipset: String::from(""),
         chrultrabook_tools: String::from(""),
-        purchase_driver_portal: String::from("")
+        purchase_driver_portal: String::from(""),
     };
     objects = v.as_array().unwrap().clone();
 
@@ -189,17 +188,19 @@ async fn setup_installation() -> Vec<String> {
     link.creative_audio = helper::remove_quotes(objects[0]["Creative_Audio"].to_string());
     link.r11_audio = helper::remove_quotes(objects[0]["R11_Audio"].to_string());
     link.drallion_audio = helper::remove_quotes(objects[0]["Drallion_Audio"].to_string());
-    link.ax211_wifi =helper::remove_quotes( objects[0]["AX211_Wifi"].to_string());
-    link.broadwell_rapid_storage =helper::remove_quotes( objects[0]["Broadwell_Rapid_Storage"].to_string());
-    link.cometlake_rapid_storage = helper::remove_quotes(objects[0]["Cometlake_Rapid_Storage"].to_string());
+    link.ax211_wifi = helper::remove_quotes(objects[0]["AX211_Wifi"].to_string());
+    link.broadwell_rapid_storage =
+        helper::remove_quotes(objects[0]["Broadwell_Rapid_Storage"].to_string());
+    link.cometlake_rapid_storage =
+        helper::remove_quotes(objects[0]["Cometlake_Rapid_Storage"].to_string());
     link.xe_graphics = helper::remove_quotes(objects[0]["XE_Graphics"].to_string());
     link.jasperlake_chipset = helper::remove_quotes(objects[0]["Jasperlake_Chipset"].to_string());
     link.amd_chipset = helper::remove_quotes(objects[0]["AMD_Chipset"].to_string());
     link.amd_graphics = helper::remove_quotes(objects[0]["AMD_Graphics"].to_string());
     link.intel_chipset = helper::remove_quotes(objects[0]["Intel_Chipset_PS1"].to_string());
     link.chrultrabook_tools = helper::remove_quotes(objects[0]["Chrultrabook_Tools"].to_string());
-    link.purchase_driver_portal = helper::remove_quotes(objects[0]["Purchase_Driver_Portal"].to_string());
-
+    link.purchase_driver_portal =
+        helper::remove_quotes(objects[0]["Purchase_Driver_Portal"].to_string());
 
     let hwid: Vec<String> = helper::get_hwid(); //physical device hardware id (elan0001)
     counter = 0;
@@ -476,8 +477,8 @@ async fn setup_installation() -> Vec<String> {
         download_vector.push(&link.wilco_ec)
     }
     let tools = Confirm::new("Download Chrultrabook Tools?")
-    .with_default(true)
-    .prompt();
+        .with_default(true)
+        .prompt();
     match tools {
         Ok(true) => {
             download_vector.push(&link.chrultrabook_tools);
@@ -501,10 +502,6 @@ async fn setup_installation() -> Vec<String> {
             driver_purchase
         );
     }
-   
-
-    
-
 
     //downloading section
     return helper::to_vec_string(download_vector);
@@ -566,7 +563,6 @@ async fn main() {
             match download_db {
                 Ok(true) => {
                     let vector = setup_installation().await;
-                    println!("{:?}", vector);
                     download_relay(vector.clone()).await;
                     let start_install = Confirm::new("Start Installation?")
                         .with_default(true)
