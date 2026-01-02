@@ -21,7 +21,7 @@ const DATABASE: &str =
     "https://github.com/death7654/ChromebookDatabase/releases/latest/download/database.json";
 
 const LINKS: &str =
-    "https://github.com/death7654/Driver-Installer-Links/releases/latest/download/links.json";
+    "https://github.com/death7654/ChromebookDatabase/releases/latest/download/links.json";
 const DATABASE_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/database.json";
 
 const LINKS_FILE_PATH: &str = "C:/oneclickdriverinstalltemp/database/links.json";
